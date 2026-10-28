@@ -1,0 +1,158 @@
+import type { DailyLogSample, HistoricalCycle } from '../types';
+
+export const SAMPLE_ACTIVE_CYCLE = {
+  cycleId: 'preview-cycle-2026-10',
+  currentDay: 14,
+  totalPredictedLength: 29,
+  currentPhase: 'ovulatory' as const,
+  cycleStartDate: '2026-10-15',
+  estimatedNextPeriodDate: '2026-11-13',
+  daysUntilPeriod: 15,
+  daysInCurrentPhaseRemaining: 2,
+  phaseConfidence: 'Moderate (Estimated window ±2 days)',
+  fertileWindowActive: true,
+  averageCycleLength: 29.2,
+  variabilityScore: 'Low (Consistent rhythm across 6 tracked cycles)',
+};
+
+export const SAMPLE_HISTORICAL_CYCLES: HistoricalCycle[] = [
+  {
+    cycleNumber: 1,
+    startDate: '2026-05-18',
+    totalDays: 28,
+    periodLengthDays: 5,
+    ovulationEstimatedDay: 14,
+    primaryMoodPattern: 'Energetic mid-cycle, quiet late luteal',
+    lutealLengthDays: 14,
+  },
+  {
+    cycleNumber: 2,
+    startDate: '2026-06-15',
+    totalDays: 29,
+    periodLengthDays: 5,
+    ovulationEstimatedDay: 15,
+    primaryMoodPattern: 'Balanced, mild fatigue pre-flow',
+    lutealLengthDays: 14,
+  },
+  {
+    cycleNumber: 3,
+    startDate: '2026-07-14',
+    totalDays: 31,
+    periodLengthDays: 6,
+    ovulationEstimatedDay: 17,
+    primaryMoodPattern: 'Travel stress delayed follicular growth',
+    lutealLengthDays: 14,
+  },
+  {
+    cycleNumber: 4,
+    startDate: '2026-08-14',
+    totalDays: 28,
+    periodLengthDays: 5,
+    ovulationEstimatedDay: 14,
+    primaryMoodPattern: 'Calm, minimal physical cramping',
+    lutealLengthDays: 14,
+  },
+  {
+    cycleNumber: 5,
+    startDate: '2026-09-11',
+    totalDays: 30,
+    periodLengthDays: 5,
+    ovulationEstimatedDay: 16,
+    primaryMoodPattern: 'Higher creativity days 10–16',
+    lutealLengthDays: 14,
+  },
+  {
+    cycleNumber: 6,
+    startDate: '2026-10-11',
+    totalDays: 29,
+    periodLengthDays: 5,
+    ovulationEstimatedDay: 15,
+    primaryMoodPattern: 'Current cycle preview baseline',
+    lutealLengthDays: 14,
+  },
+];
+
+export const SAMPLE_DAILY_LOGS: DailyLogSample[] = [
+  {
+    date: '2026-10-24',
+    dayOfCycle: 10,
+    phase: 'follicular',
+    flow: 'none',
+    energy: 4,
+    mood: 'focused',
+    physicalSensations: ['Light pelvic awareness', 'Clear skin', 'Good muscle recovery'],
+    cervicalFluid: 'creamy',
+    notes: 'Morning run felt effortless. Focused easily during work strategy block.',
+  },
+  {
+    date: '2026-10-25',
+    dayOfCycle: 11,
+    phase: 'follicular',
+    flow: 'none',
+    energy: 4,
+    mood: 'radiant',
+    physicalSensations: ['Social energy high', 'Great stamina'],
+    cervicalFluid: 'creamy',
+    notes: 'Enjoyed social dinner, appetite felt well balanced.',
+  },
+  {
+    date: '2026-10-26',
+    dayOfCycle: 12,
+    phase: 'follicular',
+    flow: 'none',
+    energy: 5,
+    mood: 'radiant',
+    physicalSensations: ['High skin radiance', 'Increased libido'],
+    cervicalFluid: 'watery',
+    notes: 'Noticeable shift toward fluid transparency.',
+  },
+  {
+    date: '2026-10-27',
+    dayOfCycle: 13,
+    phase: 'ovulatory',
+    flow: 'none',
+    energy: 5,
+    mood: 'radiant',
+    physicalSensations: ['Egg-white cervical fluid', 'Right-sided light twinge', 'Elevated libido'],
+    cervicalFluid: 'egg-white',
+    notes: 'Classic ovulatory sensations. Very energized throughout day.',
+  },
+  {
+    date: '2026-10-28',
+    dayOfCycle: 14,
+    phase: 'ovulatory',
+    flow: 'none',
+    energy: 4,
+    mood: 'focused',
+    physicalSensations: ['Full energy', 'Warm core sensation', 'Mild breast sensitivity'],
+    cervicalFluid: 'egg-white',
+    notes: 'Today: Peak fertile window sign observed. Feeling grounded and clear.',
+  },
+];
+
+export const SAMPLE_PATTERN_OBSERVATIONS = [
+  {
+    id: 'pattern-energy',
+    title: 'High Vitality in Mid-Follicular Window',
+    description:
+      'Across your last 4 cycles, energy self-ratings average 4.6 out of 5 between Days 10 and 15, corresponding to rising estradiol.',
+    category: 'Energy & Hormones',
+    confidence: 'Consistent across 4 cycles',
+  },
+  {
+    id: 'pattern-luteal-length',
+    title: 'Predictable 14-Day Luteal Phase',
+    description:
+      'While your total cycle ranges from 28 to 31 days, your post-ovulatory (luteal) phase remains consistently 14 days. Variations occur in follicular recruitment length.',
+    category: 'Cycle Physiology',
+    confidence: 'High regularity',
+  },
+  {
+    id: 'pattern-cues',
+    title: 'Fluid Pattern Precedes Ovulation by 48h',
+    description:
+      'Fertile-quality cervical fluid (watery transitioning to egg-white) reliably appears 2 days before temperature shifts.',
+    category: 'Biomarkers',
+    confidence: 'Clear correlation',
+  },
+];

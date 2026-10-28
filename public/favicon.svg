@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="14" fill="#FFF7F4" stroke="#EED9D5" stroke-width="1.5"/>
+  <!-- Harmonious Rose & Berry organic petal motif -->
+  <path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26C18.2 26 20.2 25.3 21.8 24C16.8 23 13 18.5 13 13C13 10.3 14.1 7.8 16 6Z" fill="#A85F76" opacity="0.9"/>
+  <circle cx="19.5" cy="12.5" r="4.5" fill="#D99B9F" opacity="0.85"/>
+  <circle cx="21" cy="19.5" r="3" fill="#593744" opacity="0.35"/>
+</svg>

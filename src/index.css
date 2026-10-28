@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory-page: #FFF7F4;
+  --color-ivory-surface: #FBF1ED;
+  --color-ivory-subtle: #F6E6E1;
+
+  --color-blush-soft: #F2DCD9;
+  --color-rose-muted: #D99B9F;
+  --color-berry: #A85F76;
+  --color-berry-dark: #9E4F66;
+  --color-berry-hover: #893F55;
+  --color-berry-subtle: #F7EBF0;
+  
+  --color-plum-deep: #593744;
+  --color-plum-light: #74505F;
+  --color-plum-muted: #8C6775;
+  --color-plum-dark: #3E242E;
+
+  --color-border-soft: #EED9D5;
+  --color-border-subtle: #F5E4E0;
+
+  --font-editorial: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Rose & Berry Core Semantic Tokens */
+    --bg-page: #FFF7F4;
+    --bg-card: #FFFFFF;
+    --bg-surface: #FBF1ED;
+    --bg-subtle: #F6E6E1;
+    --bg-blush: #F2DCD9;
+    --bg-berry-subtle: #F7EBF0;
+
+    --border-soft: #EED9D5;
+    --border-subtle: #F5E4E0;
+    --border-active: #D99B9F;
+    --border-focus: #9E4F66;
+
+    --text-primary: #593744;
+    --text-secondary: #74505F;
+    --text-muted: #8C6775;
+
+    --brand-berry: #A85F76;
+    --brand-berry-dark: #9E4F66;
+    --brand-berry-hover: #893F55;
+    --brand-rose: #D99B9F;
+    --brand-blush: #F2DCD9;
+    --brand-plum: #593744;
+
+    /* Status Tokens */
+    --sage-bg: #EFF6F1;
+    --sage-border: #C5DECA;
+    --sage-text: #2F5938;
+    --sage-accent: #4A7853;
+
+    --amber-bg: #FEF5EE;
+    --amber-border: #F8D8BF;
+    --amber-text: #874614;
+    --amber-accent: #B85C27;
+
+    --amethyst-bg: #F8F2FA;
+    --amethyst-border: #E4D5EB;
+    --amethyst-text: #5B376E;
+    --amethyst-accent: #7A486E;
+
+    --alert-bg: #FDF1F3;
+    --alert-border: #F5CDD3;
+    --alert-text: #8E2235;
+    --alert-accent: #B83A52;
+  }
+
+  /* Architectural future dark-mode hook (ready for future milestone activation) */
+  [data-theme="dark"] {
+    --bg-page: #23161C;
+    --bg-card: #2E1F26;
+    --bg-surface: #382730;
+    --bg-subtle: #42303A;
+    --bg-blush: #4D3743;
+    --bg-berry-subtle: #3A2530;
+
+    --border-soft: #523B47;
+    --border-subtle: #44313B;
+    --border-active: #D99B9F;
+    --border-focus: #D99B9F;
+
+    --text-primary: #FFF7F4;
+    --text-secondary: #E8D5DC;
+    --text-muted: #C4ABB5;
+
+    --brand-berry: #D99B9F;
+    --brand-berry-dark: #A85F76;
+    --brand-berry-hover: #C57E94;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* High-visibility Rose & Berry focus ring */
+  :focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+  }
+
+  /* Text selection highlight in soft blush & deep plum */
+  ::selection {
+    background-color: #F2DCD9;
+    color: #593744;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+.font-editorial {
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+}
+
+.font-sans-ui {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
