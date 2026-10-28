@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ARTICLES } from '../data/encyclopediaArticles';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
@@ -6,6 +6,7 @@ import { Callout } from '../components/ui/Callout';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { useDocumentMetadata } from '../utils/seo';
+import { calculateReadingTime } from '../utils/readingTime';
 import {
   Clock,
   BookOpen,
@@ -19,12 +20,14 @@ import {
   HelpCircle,
   ChevronDown,
   Info,
+  Calendar,
 } from 'lucide-react';
 
 export const ArticleDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [showReviewStatus, setShowReviewStatus] = useState<boolean>(false);
   const [mobileTocOpen, setMobileTocOpen] = useState<boolean>(false);
+  const [activeSectionId, setActiveSectionId] = useState<string>('');
 
   const article = ARTICLES.find((a) => a.slug === slug);
 
@@ -38,16 +41,56 @@ export const ArticleDetailPage: React.FC = () => {
     ogType: 'article',
   });
 
+  // Calculate actual reading time from content
+  const readingTime = useMemo(() => {
+    if (!article) return 1;
+    return calculateReadingTime(article.sections, article.summary);
+  }, [article]);
+
+  // Active section tracking via IntersectionObserver for polished reading rhythm
+  useEffect(() => {
+    if (!article || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      return;
+    }
+
+    const sectionIds = [
+      ...article.sections.map((_, idx) => `section-${idx}`),
+      'evidence-transparency',
+      'references',
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Look for intersecting section closest to top
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible) {
+          setActiveSectionId(visible.target.id);
+        }
+      },
+      {
+        rootMargin: '-80px 0px -55% 0px',
+        threshold: 0.1,
+      }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [article]);
+
   if (!article) {
     return <Navigate to="/404" replace />;
   }
 
-  // Resolve related articles from relatedArticleSlugs, falling back to same-category
+  // Resolve related articles strictly from relatedArticleSlugs, falling back to same-category
   const relatedArticles = (
     article.relatedArticleSlugs
       ? article.relatedArticleSlugs
           .map((relSlug) => ARTICLES.find((a) => a.slug === relSlug))
-          .filter((a): a is typeof article => Boolean(a))
+          .filter((a): a is typeof article => Boolean(a && a.slug !== article.slug))
       : ARTICLES.filter((a) => a.slug !== article.slug)
   ).slice(0, 2);
 
@@ -83,7 +126,7 @@ export const ArticleDetailPage: React.FC = () => {
   const EvidenceIcon = evidenceConfig.icon;
 
   return (
-    <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
       {/* Refined Compact Article Header */}
       <header className="pt-6 sm:pt-8 pb-6 border-b border-[#EED9D5] dark:border-[#493744]">
         {/* Breadcrumb Navigation */}
@@ -97,26 +140,26 @@ export const ArticleDetailPage: React.FC = () => {
         </div>
 
         {/* Category Kicker */}
-        <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#9E4F66] dark:text-[#E8A2B6] mb-1.5">
+        <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#9E4F66] dark:text-[#E8A2B6] mb-2">
           {article.categoryLabel}
         </span>
 
-        {/* Article Title: Prominent, Line-Length Constrained */}
+        {/* Article Title: Prominent, Editorial Serif, Line-Length Constrained */}
         <h1 className="font-editorial text-3xl sm:text-4xl lg:text-[2.65rem] font-semibold text-[#593744] dark:text-[#F8F0F3] tracking-tight leading-[1.18] max-w-4xl text-balance">
           {article.title}
         </h1>
 
-        {/* Subtitle / Lead Paragraph */}
-        <p className="mt-3 text-base sm:text-lg text-[#74505F] dark:text-[#C7B8C2] leading-relaxed max-w-3xl">
+        {/* Subtitle / Lead Paragraph: Soft, high-readability introductory tone */}
+        <p className="mt-3.5 text-base sm:text-lg text-[#74505F] dark:text-[#C7B8C2] leading-relaxed max-w-3xl font-light">
           {article.subtitle}
         </p>
 
         {/* Compact Metadata Row */}
         <div className="mt-5 pt-3.5 border-t border-[#F5E4E0] dark:border-[#3B2A35] flex flex-wrap items-center gap-x-3.5 gap-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]">
-          {/* Estimated Reading Time */}
+          {/* Estimated Reading Time (Dynamically verified from content) */}
           <div className="inline-flex items-center gap-1.5 font-medium text-[#593744] dark:text-[#F8F0F3]">
             <Clock className="w-3.5 h-3.5 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
-            <span>{article.readingTimeMinutes} min read</span>
+            <span>{readingTime} min read</span>
           </div>
 
           <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
@@ -124,7 +167,10 @@ export const ArticleDetailPage: React.FC = () => {
           </span>
 
           {/* Last Updated */}
-          <span>Updated {article.lastReviewed}</span>
+          <div className="inline-flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5 text-[#8C6775] dark:text-[#A3919D]" aria-hidden="true" />
+            <span>Updated {article.lastReviewed}</span>
+          </div>
 
           <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
             •
@@ -192,32 +238,43 @@ export const ArticleDetailPage: React.FC = () => {
         )}
       </header>
 
-      {/* Main Two-Column Layout */}
+      {/* Main Two-Column Editorial Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mt-8">
         {/* Sticky Sidebar Table of Contents (Desktop) */}
-        <aside className="lg:col-span-4 lg:sticky lg:top-24 space-y-5">
-          {/* Table of Contents Card */}
-          <Card variant="flat" padding="md" className="space-y-3">
+        <aside className="hidden lg:block lg:col-span-4 lg:sticky lg:top-24 space-y-5">
+          <Card variant="flat" padding="md" className="space-y-3.5">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#593744] dark:text-[#F8F0F3]">
               <BookOpen className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
               <span>In This Guide</span>
             </div>
             <nav aria-label="Table of Contents">
-              <ul className="space-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]">
-                {article.sections.map((section, idx) => (
-                  <li key={idx}>
-                    <a
-                      href={`#section-${idx}`}
-                      className="hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline block leading-normal transition-colors py-0.5"
-                    >
-                      {section.heading}
-                    </a>
-                  </li>
-                ))}
+              <ul className="space-y-1.5 text-xs">
+                {article.sections.map((section, idx) => {
+                  const sectionId = `section-${idx}`;
+                  const isActive = activeSectionId === sectionId;
+                  return (
+                    <li key={idx}>
+                      <a
+                        href={`#${sectionId}`}
+                        className={`block py-1 leading-normal transition-all rounded-r ${
+                          isActive
+                            ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
+                            : 'text-[#74505F] dark:text-[#C7B8C2] hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline pl-2'
+                        }`}
+                      >
+                        {section.heading}
+                      </a>
+                    </li>
+                  );
+                })}
                 <li>
                   <a
                     href="#evidence-transparency"
-                    className="hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline block leading-normal transition-colors py-0.5 font-medium text-[#4A7853] dark:text-[#A8DEB3]"
+                    className={`block py-1 leading-normal transition-all rounded-r ${
+                      activeSectionId === 'evidence-transparency'
+                        ? 'font-semibold text-[#4A7853] dark:text-[#A8DEB3] border-l-2 border-[#4A7853] dark:border-[#A8DEB3] pl-2 -ml-2'
+                        : 'text-[#4A7853] dark:text-[#A8DEB3] hover:underline pl-2 font-medium'
+                    }`}
                   >
                     Evidence Classification
                   </a>
@@ -225,7 +282,11 @@ export const ArticleDetailPage: React.FC = () => {
                 <li>
                   <a
                     href="#references"
-                    className="hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline font-semibold block text-[#9E4F66] dark:text-[#E8A2B6] pt-1"
+                    className={`block py-1 leading-normal transition-all rounded-r pt-1.5 border-t border-[#EED9D5]/60 dark:border-[#493744] ${
+                      activeSectionId === 'references'
+                        ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
+                        : 'text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pl-2 font-medium'
+                    }`}
                   >
                     Clinical References ({article.references.length})
                   </a>
@@ -245,32 +306,37 @@ export const ArticleDetailPage: React.FC = () => {
         </aside>
 
         {/* Main Article Body & Content */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-9">
           {/* Mobile Table of Contents Accordion */}
-          {article.sections.length > 2 && (
+          {article.sections.length > 1 && (
             <div className="lg:hidden p-3.5 rounded-2xl bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744]">
               <button
                 type="button"
                 onClick={() => setMobileTocOpen(!mobileTocOpen)}
                 className="w-full flex items-center justify-between text-xs font-bold text-[#593744] dark:text-[#F8F0F3] cursor-pointer"
                 aria-expanded={mobileTocOpen}
+                aria-controls="mobile-table-of-contents"
               >
                 <span className="flex items-center gap-2">
-                  <BookOpen className="w-3.5 h-3.5 text-[#9E4F66] dark:text-[#E8A2B6]" />
+                  <BookOpen className="w-3.5 h-3.5 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
                   <span>Table of Contents ({article.sections.length} sections)</span>
                 </span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform ${mobileTocOpen ? 'rotate-180' : ''}`}
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${mobileTocOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
                 />
               </button>
               {mobileTocOpen && (
-                <ul className="mt-3 pt-3 border-t border-[#EED9D5] dark:border-[#493744] space-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]">
+                <ul
+                  id="mobile-table-of-contents"
+                  className="mt-3 pt-3 border-t border-[#EED9D5] dark:border-[#493744] space-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]"
+                >
                   {article.sections.map((section, idx) => (
                     <li key={idx}>
                       <a
                         href={`#section-${idx}`}
                         onClick={() => setMobileTocOpen(false)}
-                        className="hover:underline block py-0.5 text-[#593744] dark:text-[#F8F0F3]"
+                        className="hover:underline block py-1 text-[#593744] dark:text-[#F8F0F3]"
                       >
                         {section.heading}
                       </a>
@@ -280,7 +346,7 @@ export const ArticleDetailPage: React.FC = () => {
                     <a
                       href="#evidence-transparency"
                       onClick={() => setMobileTocOpen(false)}
-                      className="hover:underline block py-0.5 text-[#4A7853] dark:text-[#A8DEB3]"
+                      className="hover:underline block py-1 text-[#4A7853] dark:text-[#A8DEB3] font-medium"
                     >
                       Evidence Classification
                     </a>
@@ -289,7 +355,7 @@ export const ArticleDetailPage: React.FC = () => {
                     <a
                       href="#references"
                       onClick={() => setMobileTocOpen(false)}
-                      className="hover:underline block py-0.5 font-semibold text-[#9E4F66] dark:text-[#E8A2B6]"
+                      className="hover:underline block py-1 font-semibold text-[#9E4F66] dark:text-[#E8A2B6]"
                     >
                       Clinical References ({article.references.length})
                     </a>
@@ -299,26 +365,29 @@ export const ArticleDetailPage: React.FC = () => {
             </div>
           )}
 
-          {/* Restrained & Readable Educational Boundary Notice */}
+          {/* Understated Educational Boundary Notice */}
           <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FBF1ED]/80 dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] flex items-start gap-3 text-xs text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
             <ShieldAlert className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6] shrink-0 mt-0.5" aria-hidden="true" />
             <p>
               <strong className="font-semibold text-[#593744] dark:text-[#F8F0F3]">Educational Boundary Notice:</strong>{' '}
               {article.disclaimer ||
-                'This article provides general physiological education. It does not replace individualized clinical evaluation, diagnosis, or personalized medical care from a licensed healthcare provider.'}
+                'This article provides general physiological education. It does not replace clinical consultation, diagnosis, or personalized medical care from a licensed healthcare provider.'}
             </p>
           </div>
 
-          {/* Key Takeaways Box */}
+          {/* Key Takeaways Box: Clear, high-contrast comprehension aid */}
           <div className="bg-[#FBF1ED] dark:bg-[#211A22] p-5 sm:p-6 rounded-2xl border border-[#EED9D5] dark:border-[#493744] space-y-3.5">
             <h2 className="font-editorial text-lg sm:text-xl font-bold text-[#593744] dark:text-[#F8F0F3] flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#4A7853] dark:text-[#A8DEB3]" aria-hidden="true" />
               <span>Key Takeaways</span>
             </h2>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#593744] dark:text-[#F8F0F3]">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-[#593744] dark:text-[#F8F0F3]">
               {article.keyTakeaways.map((takeaway, i) => (
                 <li key={i} className="flex items-start gap-2.5 leading-relaxed">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9E4F66] dark:bg-[#E8A2B6] mt-2 shrink-0" aria-hidden="true" />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-[#9E4F66] dark:bg-[#E8A2B6] mt-2 shrink-0"
+                    aria-hidden="true"
+                  />
                   <span>{takeaway}</span>
                 </li>
               ))}
@@ -326,52 +395,62 @@ export const ArticleDetailPage: React.FC = () => {
           </div>
 
           {/* Article Sections Loop */}
-          {article.sections.map((section, idx) => (
-            <section
-              key={idx}
-              id={`section-${idx}`}
-              className="space-y-4 scroll-mt-24"
-            >
-              <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-[#593744] dark:text-[#F8F0F3] pt-6 border-t border-[#EED9D5] dark:border-[#493744]">
-                {section.heading}
-              </h2>
+          <div className="space-y-12">
+            {article.sections.map((section, idx) => (
+              <section
+                key={idx}
+                id={`section-${idx}`}
+                className="space-y-5 scroll-mt-28"
+              >
+                <h2 className="font-editorial text-2xl sm:text-[1.85rem] font-semibold text-[#593744] dark:text-[#F8F0F3] pt-6 border-t border-[#EED9D5] dark:border-[#493744] leading-snug">
+                  {section.heading}
+                </h2>
 
-              <div className="space-y-4 text-base sm:text-[1.0625rem] text-[#593744] dark:text-[#F8F0F3] leading-[1.75] max-w-prose">
-                {section.content.map((p, pIdx) => (
-                  <p key={pIdx}>{p}</p>
-                ))}
-              </div>
-
-              {/* Subsections if present */}
-              {section.subsections && section.subsections.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  {section.subsections.map((sub, sIdx) => (
-                    <div
-                      key={sIdx}
-                      className="bg-white dark:bg-[#2B222C] p-4 rounded-xl border border-[#EED9D5] dark:border-[#493744] text-xs sm:text-sm space-y-1.5"
-                    >
-                      <h3 className="font-bold text-[#593744] dark:text-[#F8F0F3]">{sub.title}</h3>
-                      <p className="text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">{sub.body}</p>
-                    </div>
+                {/* Paragraphs with optimal line length (65-75ch) and generous reading leading */}
+                <div className="space-y-4 text-base sm:text-[1.0625rem] text-[#593744] dark:text-[#F8F0F3] leading-[1.8] max-w-prose">
+                  {section.content.map((p, pIdx) => (
+                    <p key={pIdx}>{p}</p>
                   ))}
                 </div>
-              )}
 
-              {/* Callout if present */}
-              {section.callout && (
-                <div className="pt-2">
-                  <Callout
-                    type={section.callout.type}
-                    title={section.callout.title}
-                    text={section.callout.text}
-                  />
-                </div>
-              )}
-            </section>
-          ))}
+                {/* Subsections if present */}
+                {section.subsections && section.subsections.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    {section.subsections.map((sub, sIdx) => (
+                      <div
+                        key={sIdx}
+                        className="bg-white dark:bg-[#2B222C] p-4.5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] text-xs sm:text-sm space-y-2 shadow-2xs"
+                      >
+                        <h3 className="font-bold text-sm text-[#593744] dark:text-[#F8F0F3] leading-snug">
+                          {sub.title}
+                        </h3>
+                        <p className="text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
+                          {sub.body}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Callout if present */}
+                {section.callout && (
+                  <div className="pt-2 max-w-prose">
+                    <Callout
+                      type={section.callout.type}
+                      title={section.callout.title}
+                      text={section.callout.text}
+                    />
+                  </div>
+                )}
+              </section>
+            ))}
+          </div>
 
           {/* Evidence Transparency & Plain-Language Uncertainty */}
-          <section id="evidence-transparency" className="pt-8 border-t-2 border-[#EED9D5] dark:border-[#493744] space-y-3.5 scroll-mt-24">
+          <section
+            id="evidence-transparency"
+            className="pt-8 border-t-2 border-[#EED9D5] dark:border-[#493744] space-y-4 scroll-mt-28"
+          >
             <div className="flex items-center gap-2">
               <Info className="w-4 h-4 text-[#4A7853] dark:text-[#A8DEB3]" aria-hidden="true" />
               <h2 className="font-editorial text-2xl font-bold text-[#593744] dark:text-[#F8F0F3]">
@@ -379,8 +458,8 @@ export const ArticleDetailPage: React.FC = () => {
               </h2>
             </div>
 
-            <div className="bg-[#FBF1ED] dark:bg-[#211A22] p-4 sm:p-5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] space-y-2.5">
-              <div className="flex items-center gap-2">
+            <div className="bg-[#FBF1ED] dark:bg-[#211A22] p-5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] space-y-3">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <Badge variant={evidenceConfig.variant} size="sm">
                   {evidenceConfig.label}
                 </Badge>
@@ -388,17 +467,20 @@ export const ArticleDetailPage: React.FC = () => {
                   {evidenceConfig.summary}
                 </span>
               </div>
-              <p className="text-xs text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
+              <p className="text-xs sm:text-[13px] text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
                 {article.evidenceExplanation}
               </p>
-              <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-1 border-t border-[#EED9D5]/60 dark:border-[#493744]">
+              <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-2 border-t border-[#EED9D5]/60 dark:border-[#493744] leading-relaxed">
                 In accordance with NASA’s Science & Evidence principles, we do not present correlations as causal, estimates as clinical measurements, or 28-day cycles as a universal norm.
               </p>
             </div>
           </section>
 
           {/* Credible References Section */}
-          <section id="references" className="pt-6 border-t border-[#EED9D5] dark:border-[#493744] space-y-4 scroll-mt-24">
+          <section
+            id="references"
+            className="pt-6 border-t border-[#EED9D5] dark:border-[#493744] space-y-4 scroll-mt-28"
+          >
             <div className="flex items-center justify-between">
               <h2 className="font-editorial text-2xl font-bold text-[#593744] dark:text-[#F8F0F3]">
                 Clinical & Scientific References
@@ -408,25 +490,30 @@ export const ArticleDetailPage: React.FC = () => {
               </span>
             </div>
 
-            <p className="text-xs text-[#74505F] dark:text-[#C7B8C2]">
+            <p className="text-xs text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
               In accordance with our Science & Evidence principles, this article cites published clinical consensus statements, textbooks, and peer-reviewed journals without fabricated citations.
             </p>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3.5 pt-2">
               {article.references.map((ref) => (
                 <div
                   key={ref.id}
-                  className="bg-[#FBF1ED] dark:bg-[#211A22] p-4 rounded-2xl border border-[#EED9D5] dark:border-[#493744] text-xs space-y-1"
+                  id={ref.id}
+                  className="bg-[#FBF1ED] dark:bg-[#211A22] p-4.5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] text-xs space-y-1.5 scroll-mt-28 transition-colors"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-semibold text-[#593744] dark:text-[#F8F0F3]">{ref.title}</span>
-                    <span className="text-[#8C6775] dark:text-[#A3919D]">({ref.year})</span>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="font-semibold text-sm text-[#593744] dark:text-[#F8F0F3]">
+                      {ref.title}
+                    </span>
+                    <span className="text-[#8C6775] dark:text-[#A3919D] font-mono text-[11px]">
+                      ({ref.year})
+                    </span>
                   </div>
                   <p className="text-[#74505F] dark:text-[#C7B8C2]">
                     {ref.authors} — <em>{ref.source}</em>
                   </p>
                   {ref.note && (
-                    <p className="text-[#8C6775] dark:text-[#A3919D] italic pt-0.5">
+                    <p className="text-[#8C6775] dark:text-[#A3919D] italic pt-0.5 leading-relaxed">
                       Note: {ref.note}
                     </p>
                   )}
@@ -435,7 +522,8 @@ export const ArticleDetailPage: React.FC = () => {
                       href={ref.doiOrUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pt-1 font-medium"
+                      aria-label={`Access source publication: ${ref.title}`}
+                      className="inline-flex items-center gap-1.5 text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pt-1 font-semibold"
                     >
                       <span>Access Publication Source</span>
                       <ExternalLink className="w-3 h-3" aria-hidden="true" />
@@ -466,7 +554,7 @@ export const ArticleDetailPage: React.FC = () => {
                   <Link
                     key={rel.slug}
                     to={`/encyclopedia/${rel.slug}`}
-                    className="p-5 bg-white dark:bg-[#2B222C] rounded-2xl border border-[#EED9D5] dark:border-[#493744] hover:border-[#9E4F66] dark:hover:border-[#E8A2B6] transition-colors block group text-left"
+                    className="p-5 bg-white dark:bg-[#2B222C] rounded-2xl border border-[#EED9D5] dark:border-[#493744] hover:border-[#9E4F66] dark:hover:border-[#E8A2B6] transition-colors block group text-left shadow-2xs"
                   >
                     <div className="flex items-center justify-between gap-2 mb-1.5">
                       <span className="text-xs text-[#9E4F66] dark:text-[#E8A2B6] font-semibold">
@@ -479,10 +567,10 @@ export const ArticleDetailPage: React.FC = () => {
                     <h4 className="text-sm font-bold text-[#593744] dark:text-[#F8F0F3] group-hover:text-[#9E4F66] dark:group-hover:text-[#E8A2B6] transition-colors line-clamp-2">
                       {rel.title}
                     </h4>
-                    <p className="text-xs text-[#74505F] dark:text-[#C7B8C2] mt-1 line-clamp-2">
+                    <p className="text-xs text-[#74505F] dark:text-[#C7B8C2] mt-1 line-clamp-2 leading-relaxed">
                       {rel.subtitle}
                     </p>
-                    <div className="mt-3 text-xs text-[#9E4F66] dark:text-[#E8A2B6] font-medium flex items-center gap-1">
+                    <div className="mt-3 text-xs text-[#9E4F66] dark:text-[#E8A2B6] font-semibold flex items-center gap-1">
                       <span>Read Guide</span>
                       <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                     </div>
@@ -491,6 +579,17 @@ export const ArticleDetailPage: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Bottom Back Button */}
+          <div className="pt-4">
+            <Link
+              to="/encyclopedia"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-[#8C6775] dark:text-[#A3919D] hover:text-[#593744] dark:hover:text-[#F8F0F3] transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Back to Health Encyclopedia</span>
+            </Link>
+          </div>
         </div>
       </div>
     </article>

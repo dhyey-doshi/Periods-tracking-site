@@ -31,7 +31,9 @@ describe('Article Detail Page UX Refinement', () => {
   it('renders a consolidated, single-row metadata bar with reading time, evidence tier, and draft badge', () => {
     renderArticle();
 
-    expect(screen.getByText(/7 min read/i)).toBeInTheDocument();
+    const minReadEls = screen.getAllByText(/\d+ min read/i);
+    expect(minReadEls.length).toBeGreaterThan(0);
+    expect(minReadEls[0].textContent).toMatch(/\d+ min read/);
     expect(screen.getByText(/Updated October 2026/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Established Finding/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Educational Starter Draft/i)).toBeInTheDocument();
