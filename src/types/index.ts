@@ -73,19 +73,45 @@ export interface ArticleSection {
   };
 }
 
+export type ArticleEvidenceTier = 'established' | 'emerging' | 'limited';
+
+export interface ArticleEditorialInfo {
+  authorName?: string;
+  authorRole?: string;
+  reviewStatus: string;
+  reviewerName?: string;
+  reviewerRole?: string;
+  reviewedDate?: string;
+}
+
+export interface ArticleSeo {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+}
+
 export interface Article {
+  id: string;
   slug: string;
   title: string;
   subtitle: string;
   category: string;
   categoryLabel: string;
+  tags: string[];
   readingTimeMinutes: number;
+  publishedDate?: string;
   lastReviewed: string;
   reviewStatus: string;
+  editorial?: ArticleEditorialInfo;
+  evidenceTier: ArticleEvidenceTier;
+  evidenceExplanation: string;
   summary: string;
   keyTakeaways: string[];
   sections: ArticleSection[];
   references: ArticleReference[];
+  relatedArticleSlugs: string[];
+  seo: ArticleSeo;
   disclaimer?: string;
 }
 
