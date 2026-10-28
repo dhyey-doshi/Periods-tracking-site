@@ -41,13 +41,13 @@ export const HomePage: React.FC = () => {
     <div className="space-y-24 sm:space-y-32">
       {/* Hero Section */}
       <section className="relative pt-12 sm:pt-20 pb-16 sm:pb-24 overflow-hidden border-b border-[#EED9D5]">
-        {/* Subtle background ambient gradients */}
+        {/* Subtle background ambient atmospheric tones */}
         <div
-          className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#F2DCD9]/60 blur-3xl pointer-events-none"
+          className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#F2DCD9]/60 dark:bg-[#593744]/10 blur-3xl pointer-events-none"
           aria-hidden="true"
         />
         <div
-          className="absolute top-60 -left-40 w-96 h-96 rounded-full bg-[#F7EBF0]/60 blur-3xl pointer-events-none"
+          className="absolute top-60 -left-40 w-96 h-96 rounded-full bg-[#F7EBF0]/60 dark:bg-[#3E242E]/15 blur-3xl pointer-events-none"
           aria-hidden="true"
         />
 

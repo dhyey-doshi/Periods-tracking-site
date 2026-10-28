@@ -199,8 +199,16 @@
     background-color: #3B2A35;
   }
 
+  .bg-\[\#F2DCD9\]\/60 {
+    background-color: rgba(89, 55, 68, 0.1);
+  }
+
   .bg-\[\#F7EBF0\] {
     background-color: #33202B;
+  }
+
+  .bg-\[\#F7EBF0\]\/60 {
+    background-color: rgba(62, 36, 46, 0.15);
   }
 
   .bg-white {
