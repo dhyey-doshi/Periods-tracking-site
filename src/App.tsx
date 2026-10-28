@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
 import { SciencePage } from './pages/SciencePage';
@@ -12,20 +13,22 @@ import { NotFoundPage } from './pages/NotFoundPage';
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/science" element={<SciencePage />} />
-          <Route path="/encyclopedia" element={<EncyclopediaPage />} />
-          <Route path="/encyclopedia/:slug" element={<ArticleDetailPage />} />
-          <Route path="/dashboard-preview" element={<DashboardPreviewPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/science" element={<SciencePage />} />
+            <Route path="/encyclopedia" element={<EncyclopediaPage />} />
+            <Route path="/encyclopedia/:slug" element={<ArticleDetailPage />} />
+            <Route path="/dashboard-preview" element={<DashboardPreviewPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 

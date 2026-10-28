@@ -17,7 +17,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFF7F4] text-[#593744] selection:bg-[#F2DCD9] selection:text-[#593744]">
+    <div className="min-h-screen flex flex-col bg-[#FFF7F4] dark:bg-[#171319] text-[#593744] dark:text-[#F8F0F3] selection:bg-[#F2DCD9] dark:selection:bg-[#3B2A35] selection:text-[#593744] dark:selection:text-[#F8F0F3] transition-colors duration-200">
       {/* Skip to main content for accessibility */}
       <a
         href="#main-content"

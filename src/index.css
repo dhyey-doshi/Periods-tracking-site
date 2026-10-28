@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 @theme {
   --color-ivory-page: #FFF7F4;
   --color-ivory-surface: #FBF1ED;
@@ -26,7 +28,7 @@
 
 @layer base {
   :root {
-    /* Rose & Berry Core Semantic Tokens */
+    /* Rose & Berry Core Semantic Tokens (Light) */
     --bg-page: #FFF7F4;
     --bg-card: #FFFFFF;
     --bg-surface: #FBF1ED;
@@ -72,27 +74,51 @@
     --alert-accent: #B83A52;
   }
 
-  /* Architectural future dark-mode hook (ready for future milestone activation) */
-  [data-theme="dark"] {
-    --bg-page: #23161C;
-    --bg-card: #2E1F26;
-    --bg-surface: #382730;
-    --bg-subtle: #42303A;
-    --bg-blush: #4D3743;
-    --bg-berry-subtle: #3A2530;
+  [data-theme="dark"], .dark {
+    /* Rose & Berry Core Semantic Tokens (Dark) */
+    --bg-page: #171319;
+    --bg-card: #2B222C;
+    --bg-surface: #211A22;
+    --bg-subtle: #2F2430;
+    --bg-blush: #3B2A35;
+    --bg-berry-subtle: #36222C;
 
-    --border-soft: #523B47;
-    --border-subtle: #44313B;
-    --border-active: #D99B9F;
-    --border-focus: #D99B9F;
+    --border-soft: #493744;
+    --border-subtle: #3B2A35;
+    --border-active: #E8A2B6;
+    --border-focus: #E8A2B6;
 
-    --text-primary: #FFF7F4;
-    --text-secondary: #E8D5DC;
-    --text-muted: #C4ABB5;
+    --text-primary: #F8F0F3;
+    --text-secondary: #C7B8C2;
+    --text-muted: #A3919D;
 
-    --brand-berry: #D99B9F;
-    --brand-berry-dark: #A85F76;
-    --brand-berry-hover: #C57E94;
+    --brand-berry: #E8A2B6;
+    --brand-berry-dark: #D99B9F;
+    --brand-berry-hover: #F2DCD9;
+    --brand-rose: #E8A2B6;
+    --brand-blush: #3B2A35;
+    --brand-plum: #F8F0F3;
+
+    /* Dark Status Tokens */
+    --sage-bg: #1B291E;
+    --sage-border: #2D4C34;
+    --sage-text: #A8DEB3;
+    --sage-accent: #6EAC79;
+
+    --amber-bg: #2B1D12;
+    --amber-border: #4D321F;
+    --amber-text: #F3BF90;
+    --amber-accent: #D9854C;
+
+    --amethyst-bg: #251B2A;
+    --amethyst-border: #473252;
+    --amethyst-text: #DABCE6;
+    --amethyst-accent: #B07EC2;
+
+    --alert-bg: #2B141A;
+    --alert-border: #4D212B;
+    --alert-text: #F5A3B2;
+    --alert-accent: #E0637C;
   }
 
   html {
@@ -125,6 +151,12 @@
     color: #593744;
   }
 
+  .dark ::selection,
+  [data-theme="dark"] ::selection {
+    background-color: #493744;
+    color: #F8F0F3;
+  }
+
   /* Reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -135,6 +167,159 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/* ==========================================================================
+   Complete Dark Mode Palette Mappings for Rose & Berry Design System
+   ========================================================================== */
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces & Backgrounds */
+  .bg-\[\#FFF7F4\] {
+    background-color: #171319;
+  }
+
+  .bg-\[\#FFF7F4\]\/90 {
+    background-color: rgba(23, 19, 25, 0.9);
+  }
+
+  .bg-\[\#FBF1ED\] {
+    background-color: #211A22;
+  }
+
+  .bg-\[\#FAF0ED\] {
+    background-color: #261D27;
+  }
+
+  .bg-\[\#F2DCD9\] {
+    background-color: #3B2A35;
+  }
+
+  .bg-\[\#F7EBF0\] {
+    background-color: #33202B;
+  }
+
+  .bg-white {
+    background-color: #2B222C;
+  }
+
+  .bg-white\/70,
+  .bg-white\/80 {
+    background-color: rgba(43, 34, 44, 0.85);
+  }
+
+  /* Typography / Text Colors */
+  .text-\[\#593744\] {
+    color: #F8F0F3;
+  }
+
+  .text-\[\#74505F\] {
+    color: #C7B8C2;
+  }
+
+  .text-\[\#8C6775\] {
+    color: #A3919D;
+  }
+
+  .text-\[\#9E4F66\] {
+    color: #E8A2B6;
+  }
+
+  /* Borders */
+  .border-\[\#EED9D5\],
+  .border-\[\#F2DCD9\],
+  .border-\[\#F5E4E0\],
+  .border-\[\#F2DDD9\],
+  .border-\[\#E8CCD5\] {
+    border-color: #493744;
+  }
+
+  .border-\[\#D99B9F\] {
+    border-color: #634757;
+  }
+
+  /* Interactive Form Inputs & Checkbox/Radio cards */
+  input[type="text"],
+  input[type="search"],
+  textarea {
+    background-color: #211A22;
+    color: #F8F0F3;
+    border-color: #493744;
+  }
+
+  input[type="text"]:focus,
+  input[type="search"]:focus,
+  textarea:focus {
+    background-color: #2B222C;
+    border-color: #E8A2B6;
+    outline: none;
+  }
+
+  /* Interactive States */
+  .hover\:bg-\[\#FBF1ED\]:hover {
+    background-color: #382C3A;
+  }
+
+  .hover\:bg-\[\#F2DCD9\]:hover {
+    background-color: #473441;
+  }
+
+  .hover\:bg-white:hover {
+    background-color: #382C3A;
+  }
+
+  .hover\:text-\[\#593744\]:hover {
+    color: #FFF7F4;
+  }
+
+  .hover\:text-\[\#893F55\]:hover,
+  .hover\:text-\[\#763246\]:hover {
+    color: #F2DCD9;
+  }
+
+  /* Status Tokens */
+  .bg-\[\#EFF6F1\] {
+    background-color: #1A261E;
+  }
+  .border-\[\#C5DECA\] {
+    border-color: #2D4C34;
+  }
+  .text-\[\#2F5938\] {
+    color: #A8DEB3;
+  }
+
+  .bg-\[\#FEF5EE\] {
+    background-color: #2A1D13;
+  }
+  .border-\[\#F8D8BF\] {
+    border-color: #4D321F;
+  }
+  .text-\[\#874614\] {
+    color: #F3BF90;
+  }
+
+  .bg-\[\#F8F2FA\] {
+    background-color: #241A29;
+  }
+  .border-\[\#E4D5EB\] {
+    border-color: #473252;
+  }
+  .text-\[\#5B376E\] {
+    color: #DABCE6;
+  }
+
+  .bg-\[\#FDF1F3\] {
+    background-color: #2B151C;
+  }
+  .border-\[\#F5CDD3\] {
+    border-color: #4D212B;
+  }
+  .text-\[\#8E2235\] {
+    color: #F5A3B2;
   }
 }
 

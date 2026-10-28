@@ -114,5 +114,33 @@ describe('Rose & Berry Design Tokens', () => {
       expect(amethystContrast).toBeGreaterThanOrEqual(4.5);
       expect(alertContrast).toBeGreaterThanOrEqual(4.5);
     });
+
+    it('ensures dark mode primary text meets WCAG AAA (> 7:1) on dark canvas and card surfaces', () => {
+      const contrastOnCanvas = getContrastRatio('#F8F0F3', '#171319');
+      const contrastOnCard = getContrastRatio('#F8F0F3', '#2B222C');
+
+      expect(contrastOnCanvas).toBeGreaterThanOrEqual(7.0);
+      expect(contrastOnCard).toBeGreaterThanOrEqual(7.0);
+    });
+
+    it('ensures dark mode secondary text meets WCAG AA (> 4.5:1) on dark canvas and card surfaces', () => {
+      const contrastOnCanvas = getContrastRatio('#C7B8C2', '#171319');
+      const contrastOnCard = getContrastRatio('#C7B8C2', '#2B222C');
+
+      expect(contrastOnCanvas).toBeGreaterThanOrEqual(4.5);
+      expect(contrastOnCard).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it('ensures dark mode botanical badge texts meet WCAG AA (> 4.5:1) on their dark backgrounds', () => {
+      const sageDarkContrast = getContrastRatio('#A8DEB3', '#1A261E');
+      const amberDarkContrast = getContrastRatio('#F3BF90', '#2A1D13');
+      const amethystDarkContrast = getContrastRatio('#DABCE6', '#241A29');
+      const alertDarkContrast = getContrastRatio('#F5A3B2', '#2B151C');
+
+      expect(sageDarkContrast).toBeGreaterThanOrEqual(4.5);
+      expect(amberDarkContrast).toBeGreaterThanOrEqual(4.5);
+      expect(amethystDarkContrast).toBeGreaterThanOrEqual(4.5);
+      expect(alertDarkContrast).toBeGreaterThanOrEqual(4.5);
+    });
   });
 });

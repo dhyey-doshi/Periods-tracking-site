@@ -139,3 +139,76 @@ export const SEMANTIC_TOKENS = {
     },
   },
 } as const;
+
+export const DARK_PALETTE = {
+  // Core Dark Anchors
+  canvasDark: '#171319',    // Main dark background canvas
+  surfaceDark: '#211A22',   // Secondary surface
+  cardDark: '#2B222C',      // Elevated card surface
+  subtleDark: '#2F2430',    // Subtle surface tint
+  blushDark: '#3B2A35',     // Dark muted blush container
+  berrySubtleDark: '#33202B', // Dark berry tint
+
+  // Text Shades (WCAG AA & AAA compliant)
+  textPrimary: '#F8F0F3',   // Primary text (> 12:1 on dark surfaces)
+  textSecondary: '#C7B8C2', // Secondary text (> 7:1 on dark surfaces)
+  textMuted: '#A3919D',     // Tertiary / muted text (> 4.5:1 on dark surfaces)
+
+  // Accents & Borders
+  accentBerry: '#E8A2B6',   // High-visibility berry accent for dark mode
+  accentRose: '#D99B9F',    // Muted rose accent
+  borderSoft: '#493744',    // Soft dark border
+  borderSubtle: '#3B2A35',  // Subtle divider border
+  borderFocus: '#E8A2B6',   // Accessible focus ring
+
+  // Harmonized Dark Botanical Status Shades
+  sage: {
+    bg: '#1A261E',
+    border: '#2D4C34',
+    text: '#A8DEB3',
+    accent: '#6EAC79',
+  },
+  amber: {
+    bg: '#2A1D13',
+    border: '#4D321F',
+    text: '#F3BF90',
+    accent: '#D9854C',
+  },
+  amethyst: {
+    bg: '#241A29',
+    border: '#473252',
+    text: '#DABCE6',
+    accent: '#B07EC2',
+  },
+  roseAlert: {
+    bg: '#2B151C',
+    border: '#4D212B',
+    text: '#F5A3B2',
+    accent: '#E0637C',
+  },
+} as const;
+
+export const DARK_SEMANTIC_TOKENS = {
+  bg: {
+    page: DARK_PALETTE.canvasDark,
+    card: DARK_PALETTE.cardDark,
+    surface: DARK_PALETTE.surfaceDark,
+    subtle: DARK_PALETTE.subtleDark,
+    blush: DARK_PALETTE.blushDark,
+    berrySubtle: DARK_PALETTE.berrySubtleDark,
+  },
+  text: {
+    primary: DARK_PALETTE.textPrimary,
+    secondary: DARK_PALETTE.textSecondary,
+    muted: DARK_PALETTE.textMuted,
+    link: DARK_PALETTE.accentBerry,
+    linkHover: PALETTE.softBlush,
+  },
+  border: {
+    soft: DARK_PALETTE.borderSoft,
+    subtle: DARK_PALETTE.borderSubtle,
+    active: DARK_PALETTE.accentBerry,
+    focus: DARK_PALETTE.borderFocus,
+  },
+} as const;
+

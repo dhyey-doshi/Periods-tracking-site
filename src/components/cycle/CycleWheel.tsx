@@ -2,6 +2,7 @@ import React from 'react';
 import type { CyclePhase } from '../../types';
 import { CYCLE_PHASES } from '../../data/cyclePhases';
 import { SEMANTIC_TOKENS } from '../../theme/tokens';
+import { useTheme } from '../../context/ThemeContext';
 
 export interface CycleWheelProps {
   currentDay?: number;
@@ -18,6 +19,8 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
   onSelectPhase,
   className = '',
 }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   // Phase arcs configuration mapped to Rose & Berry tokens
   const phases: {
     id: CyclePhase;
@@ -96,7 +99,7 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
             cy={center}
             r={radius}
             fill="none"
-            stroke="#F6E6E1"
+            stroke={isDark ? '#362938' : '#F6E6E1'}
             strokeWidth={strokeWidth}
           />
 
@@ -122,7 +125,7 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
                 strokeLinecap="round"
                 className="cursor-pointer transition-all duration-200 opacity-90 hover:opacity-100"
                 style={{
-                  filter: isSelected ? 'drop-shadow(0px 3px 6px rgba(89,55,68,0.2))' : 'none',
+                  filter: isSelected ? (isDark ? 'drop-shadow(0px 3px 6px rgba(0,0,0,0.6))' : 'drop-shadow(0px 3px 6px rgba(89,55,68,0.2))') : 'none',
                 }}
                 onClick={() => onSelectPhase(p.id)}
                 onKeyDown={(e) => {
@@ -144,8 +147,8 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
               cx={currentDayCoord.x}
               cy={currentDayCoord.y}
               r={10}
-              fill="#FFFFFF"
-              stroke="#593744"
+              fill={isDark ? '#2B222C' : '#FFFFFF'}
+              stroke={isDark ? '#F8F0F3' : '#593744'}
               strokeWidth={3}
               className="drop-shadow-md"
             />
@@ -153,7 +156,7 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
               cx={currentDayCoord.x}
               cy={currentDayCoord.y}
               r={4}
-              fill="#9E4F66"
+              fill={isDark ? '#E8A2B6' : '#9E4F66'}
             />
           </g>
         </svg>
@@ -183,10 +186,10 @@ export const CycleWheel: React.FC<CycleWheelProps> = ({
             <button
               key={p.id}
               onClick={() => onSelectPhase(p.id)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-all ${
+              className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-[#593744] text-white shadow-xs'
-                  : 'bg-white border border-[#EED9D5] text-[#74505F] hover:bg-[#FBF1ED]'
+                  ? 'bg-[#593744] dark:bg-[#E8A2B6] text-white dark:text-[#171319] shadow-xs'
+                  : 'bg-white dark:bg-[#2B222C] border border-[#EED9D5] dark:border-[#493744] text-[#74505F] dark:text-[#C7B8C2] hover:bg-[#FBF1ED] dark:hover:bg-[#382C3A]'
               }`}
             >
               {CYCLE_PHASES[p.id].name.replace(' Phase', '')}

@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { SAMPLE_HISTORICAL_CYCLES } from '../../data/sampleCycleData';
 import { SEMANTIC_TOKENS } from '../../theme/tokens';
+import { useTheme } from '../../context/ThemeContext';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { BarChart3, Table as TableIcon, Info } from 'lucide-react';
@@ -21,6 +22,17 @@ export interface TrendChartProps {
 
 export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
   const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart');
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const chartTheme = {
+    grid: isDark ? '#493744' : '#EED9D5',
+    axisText: isDark ? '#C7B8C2' : '#74505F',
+    axisLine: isDark ? '#493744' : '#EED9D5',
+    cycleLength: isDark ? '#E8A2B6' : SEMANTIC_TOKENS.chart.cycleLength,
+    periodLength: isDark ? '#D99B9F' : SEMANTIC_TOKENS.chart.periodLength,
+    referenceLine: isDark ? '#F3BF90' : SEMANTIC_TOKENS.chart.referenceLine,
+  };
 
   const chartData = SAMPLE_HISTORICAL_CYCLES.map((cycle) => ({
     name: `Cycle ${cycle.cycleNumber}`,
@@ -35,7 +47,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
   return (
     <Card variant="elevated" padding="lg" className={`space-y-6 ${className}`}>
       {/* Header with View Toggle */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EED9D5] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EED9D5] dark:border-[#493744] pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="berry" size="sm">
@@ -90,18 +102,18 @@ export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
                 data={chartData}
                 margin={{ top: 20, right: 20, left: -15, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EED9D5" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartTheme.grid} />
                 <XAxis
                   dataKey="name"
-                  tick={{ fill: '#74505F', fontSize: 12 }}
-                  axisLine={{ stroke: '#EED9D5' }}
+                  tick={{ fill: chartTheme.axisText, fontSize: 12 }}
+                  axisLine={{ stroke: chartTheme.axisLine }}
                   tickLine={false}
                 />
                 <YAxis
                   domain={[0, 35]}
                   ticks={[0, 7, 14, 21, 28, 35]}
-                  tick={{ fill: '#74505F', fontSize: 12 }}
-                  axisLine={{ stroke: '#EED9D5' }}
+                  tick={{ fill: chartTheme.axisText, fontSize: 12 }}
+                  axisLine={{ stroke: chartTheme.axisLine }}
                   tickLine={false}
                 />
                 <Tooltip
@@ -109,17 +121,17 @@ export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
                     if (active && payload && payload.length) {
                       const d = payload[0].payload;
                       return (
-                        <div className="bg-white p-3 rounded-2xl shadow-lg border border-[#EED9D5] text-xs space-y-1.5">
-                          <p className="font-bold text-[#593744]">{d.name} ({d.startDate})</p>
-                          <div className="flex items-center gap-2 text-[#8E2235]">
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#A85F76]" />
+                        <div className="bg-white dark:bg-[#2B222C] p-3 rounded-2xl shadow-lg border border-[#EED9D5] dark:border-[#493744] text-xs space-y-1.5">
+                          <p className="font-bold text-[#593744] dark:text-[#F8F0F3]">{d.name} ({d.startDate})</p>
+                          <div className="flex items-center gap-2 text-[#8E2235] dark:text-[#F5A3B2]">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#A85F76] dark:bg-[#E8A2B6]" />
                             <span>Total Length: <strong>{d.totalDays} days</strong></span>
                           </div>
-                          <div className="flex items-center gap-2 text-[#593744]">
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#593744]" />
+                          <div className="flex items-center gap-2 text-[#593744] dark:text-[#F8F0F3]">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#593744] dark:bg-[#D99B9F]" />
                             <span>Bleeding: <strong>{d.periodLength} days</strong></span>
                           </div>
-                          <p className="text-[#8C6775] border-t border-[#EED9D5] pt-1 mt-1">
+                          <p className="text-[#8C6775] dark:text-[#A3919D] border-t border-[#EED9D5] dark:border-[#493744] pt-1 mt-1">
                             {d.notes}
                           </p>
                         </div>
@@ -130,26 +142,26 @@ export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
                 />
                 <ReferenceLine
                   y={28}
-                  stroke={SEMANTIC_TOKENS.chart.referenceLine}
+                  stroke={chartTheme.referenceLine}
                   strokeDasharray="4 4"
                   label={{
                     value: '28-day reference',
                     position: 'insideTopRight',
-                    fill: SEMANTIC_TOKENS.chart.referenceLine,
+                    fill: chartTheme.referenceLine,
                     fontSize: 11,
                   }}
                 />
                 <Bar
                   dataKey="totalDays"
                   name="Total Cycle Days"
-                  fill={SEMANTIC_TOKENS.chart.cycleLength}
+                  fill={chartTheme.cycleLength}
                   radius={[6, 6, 0, 0]}
                   maxBarSize={45}
                 />
                 <Bar
                   dataKey="periodLength"
                   name="Menstrual Bleeding Days"
-                  fill={SEMANTIC_TOKENS.chart.periodLength}
+                  fill={chartTheme.periodLength}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={45}
                 />
@@ -158,18 +170,18 @@ export const TrendChart: React.FC<TrendChartProps> = ({ className = '' }) => {
           </div>
 
           {/* Legend and Caption */}
-          <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-[#74505F] pt-2 border-t border-[#EED9D5]">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-[#74505F] pt-2 border-t border-[#EED9D5] dark:border-[#493744]">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded bg-[#A85F76]" />
+                <span className="w-3 h-3 rounded bg-[#A85F76] dark:bg-[#E8A2B6]" />
                 <span>Total Cycle Length</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded bg-[#593744]" />
+                <span className="w-3 h-3 rounded bg-[#593744] dark:bg-[#D99B9F]" />
                 <span>Period Flow Days</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-4 h-0.5 bg-[#B85C27]" />
+                <span className="w-4 h-0.5 bg-[#B85C27] dark:bg-[#F3BF90]" />
                 <span>28-Day Benchmark</span>
               </div>
             </div>

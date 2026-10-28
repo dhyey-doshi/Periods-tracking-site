@@ -35,15 +35,15 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-[#9E4F66] hover:bg-[#893F55] active:bg-[#763246] text-white shadow-xs hover:shadow focus-visible:outline-[#9E4F66]',
+      'bg-[#9E4F66] hover:bg-[#893F55] active:bg-[#763246] text-white shadow-xs hover:shadow focus-visible:outline-[#9E4F66] dark:focus-visible:outline-[#E8A2B6]',
     secondary:
-      'bg-[#593744] hover:bg-[#3E242E] active:bg-[#2A161E] text-white shadow-xs hover:shadow focus-visible:outline-[#593744]',
+      'bg-[#593744] hover:bg-[#3E242E] active:bg-[#2A161E] text-white dark:bg-[#4D333E] dark:hover:bg-[#5C3D4A] dark:text-[#F8F0F3] shadow-xs hover:shadow focus-visible:outline-[#593744] dark:focus-visible:outline-[#E8A2B6]',
     outline:
-      'border border-[#EED9D5] hover:border-[#D99B9F] bg-white/80 hover:bg-white text-[#593744] focus-visible:outline-[#9E4F66]',
+      'border border-[#EED9D5] hover:border-[#D99B9F] bg-white/80 hover:bg-white text-[#593744] dark:border-[#493744] dark:hover:border-[#E8A2B6] dark:bg-[#2B222C] dark:hover:bg-[#382C3A] dark:text-[#F8F0F3] focus-visible:outline-[#9E4F66] dark:focus-visible:outline-[#E8A2B6]',
     subtle:
-      'bg-[#F2DCD9] hover:bg-[#EAD5D7] active:bg-[#E2C7CA] text-[#593744] focus-visible:outline-[#593744]',
+      'bg-[#F2DCD9] hover:bg-[#EAD5D7] active:bg-[#E2C7CA] text-[#593744] dark:bg-[#3B2A35] dark:hover:bg-[#473441] dark:text-[#F8F0F3] focus-visible:outline-[#593744] dark:focus-visible:outline-[#E8A2B6]',
     ghost:
-      'hover:bg-[#FBF1ED] text-[#74505F] hover:text-[#593744] focus-visible:outline-[#9E4F66]',
+      'hover:bg-[#FBF1ED] text-[#74505F] hover:text-[#593744] dark:hover:bg-[#382C3A] dark:text-[#C7B8C2] dark:hover:text-[#F8F0F3] focus-visible:outline-[#9E4F66] dark:focus-visible:outline-[#E8A2B6]',
   };
 
   const combinedClasses = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`.trim();

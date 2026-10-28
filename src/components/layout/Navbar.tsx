@@ -3,6 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { Menu, X, Sparkles, Activity } from 'lucide-react';
 import { BRAND } from '../../config/brand';
 import { Button } from '../ui/Button';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -91,6 +92,7 @@ export const Navbar: React.FC = () => {
 
             {/* Right Action */}
             <div className="hidden sm:flex items-center gap-3">
+              <ThemeToggle />
               <Button
                 to="/dashboard-preview"
                 variant="primary"
@@ -101,15 +103,18 @@ export const Navbar: React.FC = () => {
               </Button>
             </div>
 
-            {/* Mobile menu trigger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-[#74505F] hover:text-[#593744] hover:bg-[#FBF1ED] focus-visible:outline-2"
-              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Mobile actions & menu trigger */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <ThemeToggle />
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-xl text-[#74505F] hover:text-[#593744] hover:bg-[#FBF1ED] focus-visible:outline-2"
+                aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -133,7 +138,11 @@ export const Navbar: React.FC = () => {
                   {item.name}
                 </NavLink>
               ))}
-              <div className="pt-3 border-t border-[#EED9D5] mt-2">
+              <div className="pt-3 border-t border-[#EED9D5] mt-2 flex items-center justify-between px-2">
+                <span className="text-xs font-semibold text-[#74505F]">Theme Mode</span>
+                <ThemeToggle showLabel />
+              </div>
+              <div className="pt-2">
                 <Button
                   to="/dashboard-preview"
                   variant="primary"
