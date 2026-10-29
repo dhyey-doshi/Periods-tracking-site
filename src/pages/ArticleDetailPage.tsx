@@ -61,7 +61,6 @@ export const ArticleDetailPage: React.FC = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Look for intersecting section closest to top
         const visible = entries.find((entry) => entry.isIntersecting);
         if (visible) {
           setActiveSectionId(visible.target.id);
@@ -127,187 +126,296 @@ export const ArticleDetailPage: React.FC = () => {
 
   return (
     <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-      {/* Refined Compact Article Header */}
-      <header className="pt-6 sm:pt-8 pb-6 border-b border-[#EED9D5] dark:border-[#493744]">
-        {/* Breadcrumb Navigation */}
-        <div className="mb-3">
-          <Breadcrumbs
-            items={[
-              { label: 'Encyclopedia', path: '/encyclopedia' },
-              { label: article.categoryLabel },
-            ]}
-          />
-        </div>
-
-        {/* Category Kicker */}
-        <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#9E4F66] dark:text-[#E8A2B6] mb-2">
-          {article.categoryLabel}
-        </span>
-
-        {/* Article Title: Prominent, Editorial Serif, Line-Length Constrained */}
-        <h1 className="font-editorial text-3xl sm:text-4xl lg:text-[2.65rem] font-semibold text-[#593744] dark:text-[#F8F0F3] tracking-tight leading-[1.18] max-w-4xl text-balance">
-          {article.title}
-        </h1>
-
-        {/* Subtitle / Lead Paragraph: Soft, high-readability introductory tone */}
-        <p className="mt-3.5 text-base sm:text-lg text-[#74505F] dark:text-[#C7B8C2] leading-relaxed max-w-3xl font-light">
-          {article.subtitle}
-        </p>
-
-        {/* Compact Metadata Row */}
-        <div className="mt-5 pt-3.5 border-t border-[#F5E4E0] dark:border-[#3B2A35] flex flex-wrap items-center gap-x-3.5 gap-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]">
-          {/* Estimated Reading Time (Dynamically verified from content) */}
-          <div className="inline-flex items-center gap-1.5 font-medium text-[#593744] dark:text-[#F8F0F3]">
-            <Clock className="w-3.5 h-3.5 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
-            <span>{readingTime} min read</span>
-          </div>
-
-          <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
-            •
-          </span>
-
-          {/* Last Updated */}
-          <div className="inline-flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5 text-[#8C6775] dark:text-[#A3919D]" aria-hidden="true" />
-            <span>Updated {article.lastReviewed}</span>
-          </div>
-
-          <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
-            •
-          </span>
-
-          {/* Evidence Classification Badge */}
-          <Badge variant={evidenceConfig.variant} size="sm">
-            <span className="flex items-center gap-1">
-              <EvidenceIcon className="w-3 h-3" aria-hidden="true" />
-              <span>{evidenceConfig.label}</span>
-            </span>
-          </Badge>
-
-          <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
-            •
-          </span>
-
-          {/* Draft/Review Status Badge */}
-          <Badge variant="blush" size="sm">
-            Educational Starter Draft
-          </Badge>
-
-          <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
-            •
-          </span>
-
-          {/* Understated Review Status Trigger */}
-          <button
-            type="button"
-            onClick={() => setShowReviewStatus(!showReviewStatus)}
-            aria-expanded={showReviewStatus}
-            aria-controls="article-review-status"
-            className="inline-flex items-center gap-1 font-medium text-[#9E4F66] dark:text-[#E8A2B6] hover:text-[#763246] dark:hover:text-[#F2DCD9] hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9E4F66] rounded px-1.5 py-0.5 transition-colors"
-          >
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Review status</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                showReviewStatus ? 'rotate-180' : ''
-              }`}
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-
-        {/* Expandable Review Status Details */}
-        {showReviewStatus && (
-          <div
-            id="article-review-status"
-            className="mt-3 p-3.5 rounded-xl bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] text-xs text-[#74505F] dark:text-[#C7B8C2] flex items-start gap-2.5 animate-in fade-in duration-200"
-          >
-            <Sparkles className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6] shrink-0 mt-0.5" aria-hidden="true" />
-            <div className="space-y-1">
-              <strong className="text-[#593744] dark:text-[#F8F0F3] block font-semibold">
-                Content Review Status:
-              </strong>
-              <p className="leading-relaxed">{article.reviewStatus}</p>
-              {article.editorial?.authorName && (
-                <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-0.5">
-                  Editorial Attribution: {article.editorial.authorName} ({article.editorial.authorRole})
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-      </header>
+      {/* Top Breadcrumb Navigation */}
+      <div className="pt-6 sm:pt-8 pb-4">
+        <Breadcrumbs
+          items={[
+            { label: 'Encyclopedia', path: '/encyclopedia' },
+            { label: article.categoryLabel },
+          ]}
+        />
+      </div>
 
       {/* Main Two-Column Editorial Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mt-8">
-        {/* Sticky Sidebar Table of Contents (Desktop) */}
-        <aside className="hidden lg:block lg:col-span-4 lg:sticky lg:top-24 space-y-5">
-          <Card variant="flat" padding="md" className="space-y-3.5">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#593744] dark:text-[#F8F0F3]">
-              <BookOpen className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
-              <span>In This Guide</span>
-            </div>
-            <nav aria-label="Table of Contents">
-              <ul className="space-y-1.5 text-xs">
-                {article.sections.map((section, idx) => {
-                  const sectionId = `section-${idx}`;
-                  const isActive = activeSectionId === sectionId;
-                  return (
-                    <li key={idx}>
-                      <a
-                        href={`#${sectionId}`}
-                        className={`block py-1 leading-normal transition-all rounded-r ${
-                          isActive
-                            ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
-                            : 'text-[#74505F] dark:text-[#C7B8C2] hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline pl-2'
-                        }`}
-                      >
-                        {section.heading}
-                      </a>
-                    </li>
-                  );
-                })}
-                <li>
-                  <a
-                    href="#evidence-transparency"
-                    className={`block py-1 leading-normal transition-all rounded-r ${
-                      activeSectionId === 'evidence-transparency'
-                        ? 'font-semibold text-[#4A7853] dark:text-[#A8DEB3] border-l-2 border-[#4A7853] dark:border-[#A8DEB3] pl-2 -ml-2'
-                        : 'text-[#4A7853] dark:text-[#A8DEB3] hover:underline pl-2 font-medium'
-                    }`}
-                  >
-                    Evidence Classification
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#references"
-                    className={`block py-1 leading-normal transition-all rounded-r pt-1.5 border-t border-[#EED9D5]/60 dark:border-[#493744] ${
-                      activeSectionId === 'references'
-                        ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
-                        : 'text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pl-2 font-medium'
-                    }`}
-                  >
-                    Clinical References ({article.references.length})
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* Left Sidebar: Supporting Information (Desktop: Col 1-4, Order 1; Mobile: Order 2) */}
+        <aside
+          aria-label="Supporting Information"
+          className="order-2 lg:order-1 lg:col-span-4 space-y-6"
+        >
+          {/* 1. In This Guide: Desktop Table of Contents */}
+          <div className="hidden lg:block">
+            <Card variant="flat" padding="md" className="space-y-3.5">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#593744] dark:text-[#F8F0F3]">
+                <BookOpen className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
+                <span>In This Guide</span>
+              </div>
+              <nav aria-label="Table of Contents">
+                <ul className="space-y-1.5 text-xs">
+                  {article.sections.map((section, idx) => {
+                    const sectionId = `section-${idx}`;
+                    const isActive = activeSectionId === sectionId;
+                    return (
+                      <li key={idx}>
+                        <a
+                          href={`#${sectionId}`}
+                          className={`block py-1 leading-normal transition-all rounded-r ${
+                            isActive
+                              ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
+                              : 'text-[#74505F] dark:text-[#C7B8C2] hover:text-[#593744] dark:hover:text-[#F8F0F3] hover:underline pl-2'
+                          }`}
+                        >
+                          {section.heading}
+                        </a>
+                      </li>
+                    );
+                  })}
+                  <li className="pt-1.5 border-t border-[#EED9D5]/60 dark:border-[#493744]/60">
+                    <a
+                      href="#evidence-transparency"
+                      className={`block py-1 leading-normal transition-all rounded-r ${
+                        activeSectionId === 'evidence-transparency'
+                          ? 'font-semibold text-[#4A7853] dark:text-[#A8DEB3] border-l-2 border-[#4A7853] dark:border-[#A8DEB3] pl-2 -ml-2'
+                          : 'text-[#4A7853] dark:text-[#A8DEB3] hover:underline pl-2 font-medium'
+                      }`}
+                    >
+                      Evidence Classification
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#references"
+                      className={`block py-1 leading-normal transition-all rounded-r ${
+                        activeSectionId === 'references'
+                          ? 'font-semibold text-[#9E4F66] dark:text-[#E8A2B6] border-l-2 border-[#9E4F66] dark:border-[#E8A2B6] pl-2 -ml-2'
+                          : 'text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pl-2 font-medium'
+                      }`}
+                    >
+                      Clinical References ({article.references.length})
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </Card>
+          </div>
 
-          {/* Quick Return to Encyclopedia */}
-          <Link
-            to="/encyclopedia"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C6775] dark:text-[#A3919D] hover:text-[#593744] dark:hover:text-[#F8F0F3] transition-colors"
+          {/* 2. Evidence Transparency: Compact Section */}
+          <section
+            id="evidence-transparency"
+            aria-labelledby="evidence-transparency-heading"
+            className="bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] rounded-2xl p-4 sm:p-5 space-y-3 scroll-mt-28"
           >
-            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Back to Health Encyclopedia</span>
-          </Link>
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-[#4A7853] dark:text-[#A8DEB3] shrink-0" aria-hidden="true" />
+              <h2
+                id="evidence-transparency-heading"
+                className="font-editorial text-base sm:text-lg font-bold text-[#593744] dark:text-[#F8F0F3] leading-snug"
+              >
+                Evidence Transparency &amp; Scientific Basis
+              </h2>
+            </div>
+
+            <div className="space-y-2.5 text-xs text-[#74505F] dark:text-[#C7B8C2]">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant={evidenceConfig.variant} size="sm">
+                  <span className="flex items-center gap-1">
+                    <EvidenceIcon className="w-3 h-3" aria-hidden="true" />
+                    <span>{evidenceConfig.label}</span>
+                  </span>
+                </Badge>
+                <span className="text-[11px] font-medium text-[#593744] dark:text-[#F8F0F3]">
+                  {evidenceConfig.summary}
+                </span>
+              </div>
+
+              <p className="leading-relaxed">
+                {article.evidenceExplanation}
+              </p>
+
+              <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-2 border-t border-[#EED9D5]/60 dark:border-[#493744]/60 leading-relaxed">
+                In accordance with NASA’s Science &amp; Evidence principles, we do not present correlations as causal, estimates as clinical measurements, or 28-day cycles as a universal norm.
+              </p>
+            </div>
+          </section>
+
+          {/* 3. Clinical & Scientific References: Compact Well-Spaced List */}
+          <section
+            id="references"
+            aria-labelledby="references-heading"
+            className="bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] rounded-2xl p-4 sm:p-5 space-y-3.5 scroll-mt-28"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h2
+                id="references-heading"
+                className="font-editorial text-base sm:text-lg font-bold text-[#593744] dark:text-[#F8F0F3] leading-snug"
+              >
+                Clinical &amp; Scientific References
+              </h2>
+              <span className="text-[11px] text-[#8C6775] dark:text-[#A3919D] font-medium shrink-0">
+                {article.references.length} sources
+              </span>
+            </div>
+
+            <p className="text-[11px] text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
+              In accordance with our Science &amp; Evidence principles, this article cites published clinical consensus statements, textbooks, and peer-reviewed journals without fabricated citations.
+            </p>
+
+            <ol className="space-y-3 pt-1 list-none m-0 p-0">
+              {article.references.map((ref) => (
+                <li
+                  key={ref.id}
+                  id={ref.id}
+                  className="p-3.5 rounded-xl bg-white/80 dark:bg-[#2B222C]/80 border border-[#EED9D5]/70 dark:border-[#493744]/70 text-xs space-y-1.5 scroll-mt-28 transition-colors shadow-2xs"
+                >
+                  <div className="flex items-baseline justify-between gap-1.5">
+                    <span className="font-semibold text-xs text-[#593744] dark:text-[#F8F0F3] leading-tight">
+                      {ref.title}
+                    </span>
+                    <span className="text-[#8C6775] dark:text-[#A3919D] font-mono text-[10px] shrink-0">
+                      ({ref.year})
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
+                    {ref.authors} — <em>{ref.source}</em>
+                  </p>
+                  {ref.note && (
+                    <p className="text-[10px] text-[#8C6775] dark:text-[#A3919D] italic pt-0.5 leading-relaxed">
+                      Note: {ref.note}
+                    </p>
+                  )}
+                  {ref.doiOrUrl && (
+                    <a
+                      href={ref.doiOrUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Access source publication: ${ref.title}`}
+                      className="inline-flex items-center gap-1 text-[11px] text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pt-0.5 font-semibold"
+                    >
+                      <span>Access Publication Source</span>
+                      <ExternalLink className="w-2.5 h-2.5" aria-hidden="true" />
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {/* 4. Back to Health Encyclopedia: Discreet Navigation Link */}
+          <div className="pt-1">
+            <Link
+              to="/encyclopedia"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C6775] dark:text-[#A3919D] hover:text-[#593744] dark:hover:text-[#F8F0F3] transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Back to Health Encyclopedia</span>
+            </Link>
+          </div>
         </aside>
 
-        {/* Main Article Body & Content */}
-        <div className="lg:col-span-8 space-y-9">
-          {/* Mobile Table of Contents Accordion */}
+        {/* Main Column: Primary Reading Experience (Desktop: Col 5-12, Order 2; Mobile: Order 1) */}
+        <div className="order-1 lg:order-2 lg:col-span-8 space-y-8">
+          {/* 1. Article Title & Introductory Summary */}
+          <header className="space-y-3 pb-6 border-b border-[#EED9D5] dark:border-[#493744]">
+            {/* Category Kicker */}
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#9E4F66] dark:text-[#E8A2B6]">
+              {article.categoryLabel}
+            </span>
+
+            {/* Article Title: Prominent, Editorial Serif, Line-Length Constrained */}
+            <h1 className="font-editorial text-3xl sm:text-4xl lg:text-[2.65rem] font-semibold text-[#593744] dark:text-[#F8F0F3] tracking-tight leading-[1.18] max-w-4xl text-balance">
+              {article.title}
+            </h1>
+
+            {/* Subtitle / Lead Paragraph */}
+            <p className="text-base sm:text-lg text-[#74505F] dark:text-[#C7B8C2] leading-relaxed max-w-3xl font-light">
+              {article.subtitle}
+            </p>
+
+            {/* 2. Compact Article Metadata */}
+            <div className="pt-3.5 border-t border-[#F5E4E0] dark:border-[#3B2A35] flex flex-wrap items-center gap-x-3.5 gap-y-2 text-xs text-[#74505F] dark:text-[#C7B8C2]">
+              {/* Estimated Reading Time */}
+              <div className="inline-flex items-center gap-1.5 font-medium text-[#593744] dark:text-[#F8F0F3]">
+                <Clock className="w-3.5 h-3.5 text-[#9E4F66] dark:text-[#E8A2B6]" aria-hidden="true" />
+                <span>{readingTime} min read</span>
+              </div>
+
+              <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
+                •
+              </span>
+
+              {/* Last Updated */}
+              <div className="inline-flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-[#8C6775] dark:text-[#A3919D]" aria-hidden="true" />
+                <span>Updated {article.lastReviewed}</span>
+              </div>
+
+              <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
+                •
+              </span>
+
+              {/* Evidence Classification Badge */}
+              <Badge variant={evidenceConfig.variant} size="sm">
+                <span className="flex items-center gap-1">
+                  <EvidenceIcon className="w-3 h-3" aria-hidden="true" />
+                  <span>{evidenceConfig.label}</span>
+                </span>
+              </Badge>
+
+              <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
+                •
+              </span>
+
+              {/* Draft/Review Status Badge */}
+              <Badge variant="blush" size="sm">
+                Educational Starter Draft
+              </Badge>
+
+              <span className="text-[#D99B9F] dark:text-[#634757] hidden sm:inline" aria-hidden="true">
+                •
+              </span>
+
+              {/* Understated Review Status Trigger */}
+              <button
+                type="button"
+                onClick={() => setShowReviewStatus(!showReviewStatus)}
+                aria-expanded={showReviewStatus}
+                aria-controls="article-review-status"
+                className="inline-flex items-center gap-1 font-medium text-[#9E4F66] dark:text-[#E8A2B6] hover:text-[#763246] dark:hover:text-[#F2DCD9] hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9E4F66] rounded px-1.5 py-0.5 transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Review status</span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    showReviewStatus ? 'rotate-180' : ''
+                  }`}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+
+            {/* Expandable Review Status Details */}
+            {showReviewStatus && (
+              <div
+                id="article-review-status"
+                className="mt-3 p-3.5 rounded-xl bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] text-xs text-[#74505F] dark:text-[#C7B8C2] flex items-start gap-2.5 animate-in fade-in duration-200"
+              >
+                <Sparkles className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6] shrink-0 mt-0.5" aria-hidden="true" />
+                <div className="space-y-1">
+                  <strong className="text-[#593744] dark:text-[#F8F0F3] block font-semibold">
+                    Content Review Status:
+                  </strong>
+                  <p className="leading-relaxed">{article.reviewStatus}</p>
+                  {article.editorial?.authorName && (
+                    <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-0.5">
+                      Editorial Attribution: {article.editorial.authorName} ({article.editorial.authorRole})
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </header>
+
+          {/* Mobile Table of Contents Accordion (Only visible on small screens) */}
           {article.sections.length > 1 && (
             <div className="lg:hidden p-3.5 rounded-2xl bg-[#FBF1ED] dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744]">
               <button
@@ -365,7 +473,7 @@ export const ArticleDetailPage: React.FC = () => {
             </div>
           )}
 
-          {/* Understated Educational Boundary Notice */}
+          {/* 3. Understated Educational Boundary Notice */}
           <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FBF1ED]/80 dark:bg-[#211A22] border border-[#EED9D5] dark:border-[#493744] flex items-start gap-3 text-xs text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
             <ShieldAlert className="w-4 h-4 text-[#9E4F66] dark:text-[#E8A2B6] shrink-0 mt-0.5" aria-hidden="true" />
             <p>
@@ -375,7 +483,8 @@ export const ArticleDetailPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Key Takeaways Box: Clear, high-contrast comprehension aid */}
+          {/* 4. Main Article Content and Relevant In-Body Callouts */}
+          {/* Key Takeaways Box */}
           <div className="bg-[#FBF1ED] dark:bg-[#211A22] p-5 sm:p-6 rounded-2xl border border-[#EED9D5] dark:border-[#493744] space-y-3.5">
             <h2 className="font-editorial text-lg sm:text-xl font-bold text-[#593744] dark:text-[#F8F0F3] flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#4A7853] dark:text-[#A8DEB3]" aria-hidden="true" />
@@ -446,100 +555,12 @@ export const ArticleDetailPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Evidence Transparency & Plain-Language Uncertainty */}
-          <section
-            id="evidence-transparency"
-            className="pt-8 border-t-2 border-[#EED9D5] dark:border-[#493744] space-y-4 scroll-mt-28"
-          >
-            <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-[#4A7853] dark:text-[#A8DEB3]" aria-hidden="true" />
-              <h2 className="font-editorial text-2xl font-bold text-[#593744] dark:text-[#F8F0F3]">
-                Evidence Transparency & Scientific Basis
-              </h2>
-            </div>
-
-            <div className="bg-[#FBF1ED] dark:bg-[#211A22] p-5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] space-y-3">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <Badge variant={evidenceConfig.variant} size="sm">
-                  {evidenceConfig.label}
-                </Badge>
-                <span className="text-xs font-semibold text-[#593744] dark:text-[#F8F0F3]">
-                  {evidenceConfig.summary}
-                </span>
-              </div>
-              <p className="text-xs sm:text-[13px] text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
-                {article.evidenceExplanation}
-              </p>
-              <p className="text-[11px] text-[#8C6775] dark:text-[#A3919D] pt-2 border-t border-[#EED9D5]/60 dark:border-[#493744] leading-relaxed">
-                In accordance with NASA’s Science & Evidence principles, we do not present correlations as causal, estimates as clinical measurements, or 28-day cycles as a universal norm.
-              </p>
-            </div>
-          </section>
-
-          {/* Credible References Section */}
-          <section
-            id="references"
-            className="pt-6 border-t border-[#EED9D5] dark:border-[#493744] space-y-4 scroll-mt-28"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="font-editorial text-2xl font-bold text-[#593744] dark:text-[#F8F0F3]">
-                Clinical & Scientific References
-              </h2>
-              <span className="text-xs text-[#8C6775] dark:text-[#A3919D]">
-                {article.references.length} peer-reviewed sources
-              </span>
-            </div>
-
-            <p className="text-xs text-[#74505F] dark:text-[#C7B8C2] leading-relaxed">
-              In accordance with our Science & Evidence principles, this article cites published clinical consensus statements, textbooks, and peer-reviewed journals without fabricated citations.
-            </p>
-
-            <div className="space-y-3.5 pt-2">
-              {article.references.map((ref) => (
-                <div
-                  key={ref.id}
-                  id={ref.id}
-                  className="bg-[#FBF1ED] dark:bg-[#211A22] p-4.5 rounded-2xl border border-[#EED9D5] dark:border-[#493744] text-xs space-y-1.5 scroll-mt-28 transition-colors"
-                >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-semibold text-sm text-[#593744] dark:text-[#F8F0F3]">
-                      {ref.title}
-                    </span>
-                    <span className="text-[#8C6775] dark:text-[#A3919D] font-mono text-[11px]">
-                      ({ref.year})
-                    </span>
-                  </div>
-                  <p className="text-[#74505F] dark:text-[#C7B8C2]">
-                    {ref.authors} — <em>{ref.source}</em>
-                  </p>
-                  {ref.note && (
-                    <p className="text-[#8C6775] dark:text-[#A3919D] italic pt-0.5 leading-relaxed">
-                      Note: {ref.note}
-                    </p>
-                  )}
-                  {ref.doiOrUrl && (
-                    <a
-                      href={ref.doiOrUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Access source publication: ${ref.title}`}
-                      className="inline-flex items-center gap-1.5 text-[#9E4F66] dark:text-[#E8A2B6] hover:underline pt-1 font-semibold"
-                    >
-                      <span>Access Publication Source</span>
-                      <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Related Articles Navigation */}
+          {/* 5. Related Guides & Next Reading (Immediately at the end of article content) */}
           {relatedArticles.length > 0 && (
             <div className="pt-10 border-t border-[#EED9D5] dark:border-[#493744] space-y-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#8C6775] dark:text-[#A3919D]">
-                  Related Guides & Next Reading
+                  Related Guides &amp; Next Reading
                 </h3>
                 <Link
                   to="/encyclopedia"
@@ -580,8 +601,8 @@ export const ArticleDetailPage: React.FC = () => {
             </div>
           )}
 
-          {/* Bottom Back Button */}
-          <div className="pt-4">
+          {/* Discreet End-of-Page Navigation */}
+          <div className="pt-2">
             <Link
               to="/encyclopedia"
               className="inline-flex items-center gap-2 text-xs font-semibold text-[#8C6775] dark:text-[#A3919D] hover:text-[#593744] dark:hover:text-[#F8F0F3] transition-colors"

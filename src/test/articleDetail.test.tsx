@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import { ArticleDetailPage } from '../pages/ArticleDetailPage';
@@ -74,7 +74,7 @@ describe('Article Detail Page UX Refinement', () => {
 
     expect(screen.getByRole('heading', { level: 2, name: /Key Takeaways/i })).toBeInTheDocument();
     expect(screen.getByText(/In This Guide/i)).toBeInTheDocument();
-    expect(screen.getByText(/Clinical References/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Clinical References/i).length).toBeGreaterThan(0);
   });
 
   it('displays Evidence Transparency section with plain-language explanation of findings and uncertainty', () => {
@@ -107,6 +107,57 @@ describe('Article Detail Page UX Refinement', () => {
     expect(screen.getByText(/Related Guides & Next Reading/i)).toBeInTheDocument();
     expect(screen.getByText(/Understanding Estrogen & Progesterone/i)).toBeInTheDocument();
     expect(screen.getByText(/Cycle Variability: Why "Normal" Isn't Always 28 Days/i)).toBeInTheDocument();
+  });
+
+  it('houses TOC, Evidence Transparency, and References inside the supporting sidebar in exact order', () => {
+    renderArticle();
+
+    const sidebar = screen.getByRole('complementary', { name: /supporting information/i });
+    expect(sidebar).toBeInTheDocument();
+
+    const sidebarWithin = within(sidebar);
+    expect(sidebarWithin.getByText(/In This Guide/i)).toBeInTheDocument();
+    expect(
+      sidebarWithin.getByRole('heading', { level: 2, name: /Evidence Transparency & Scientific Basis/i })
+    ).toBeInTheDocument();
+    expect(
+      sidebarWithin.getByRole('heading', { level: 2, name: /Clinical & Scientific References/i })
+    ).toBeInTheDocument();
+    expect(
+      sidebarWithin.getByRole('link', { name: /back to health encyclopedia/i })
+    ).toBeInTheDocument();
+
+    // Verify ordering in DOM: TOC before Evidence, Evidence before References, References before Back link
+    const tocNode = sidebarWithin.getByText(/In This Guide/i);
+    const evidenceNode = sidebarWithin.getByRole('heading', { level: 2, name: /Evidence Transparency & Scientific Basis/i });
+    const referencesNode = sidebarWithin.getByRole('heading', { level: 2, name: /Clinical & Scientific References/i });
+    const backLinkNode = sidebarWithin.getByRole('link', { name: /back to health encyclopedia/i });
+
+    expect(tocNode.compareDocumentPosition(evidenceNode) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(evidenceNode.compareDocumentPosition(referencesNode) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(referencesNode.compareDocumentPosition(backLinkNode) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('places Related Guides & Next Reading at the end of the primary reading column without standalone evidence or references sections', () => {
+    renderArticle();
+
+    // Main column has the h1 title
+    const mainHeading = screen.getByRole('heading', { level: 1, name: /The Four Phases of the Menstrual Cycle/i });
+    const mainColumn = mainHeading.closest('.order-1') as HTMLElement;
+    expect(mainColumn).not.toBeNull();
+
+    const mainWithin = within(mainColumn);
+    // Main column should contain title, key takeaways, and related guides
+    expect(mainWithin.getByRole('heading', { level: 2, name: /Key Takeaways/i })).toBeInTheDocument();
+    expect(mainWithin.getByText(/Related Guides & Next Reading/i)).toBeInTheDocument();
+
+    // Main column should NOT have standalone Evidence Transparency or Clinical References headings
+    expect(
+      mainWithin.queryByRole('heading', { level: 2, name: /Evidence Transparency & Scientific Basis/i })
+    ).toBeNull();
+    expect(
+      mainWithin.queryByRole('heading', { level: 2, name: /Clinical & Scientific References/i })
+    ).toBeNull();
   });
 
   it('synchronizes SEO document title with article title', () => {
