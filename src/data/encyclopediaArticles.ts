@@ -1,4 +1,5 @@
 import type { Article, CategoryInfo } from '../types';
+import { calculateReadingTime } from '../utils/readingTime';
 
 export const ENCYCLOPEDIA_CATEGORIES: CategoryInfo[] = [
   {
@@ -33,7 +34,7 @@ export const ENCYCLOPEDIA_CATEGORIES: CategoryInfo[] = [
   },
 ];
 
-export const ARTICLES: Article[] = [
+const RAW_ARTICLES: Omit<Article, 'readingTimeMinutes'>[] = [
   {
     id: 'art-four-cycle-phases',
     slug: 'the-four-phases-of-the-menstrual-cycle',
@@ -42,18 +43,17 @@ export const ARTICLES: Article[] = [
     category: 'menstrual-phases',
     categoryLabel: 'Cycle Phases',
     tags: ['cycle phases', 'hormones', 'ovulation', 'menstruation', 'physiology'],
-    readingTimeMinutes: 7,
     publishedDate: '2026-09-15',
     lastReviewed: 'October 2026',
-    reviewStatus: 'Drafted from clinical guidelines & endocrine consensus (ACOG & Endocrine Society). Has not undergone independent medical board review.',
+    reviewStatus: 'Drafted from clinical guidelines & endocrine consensus (ACOG & Endocrine Society). Has not undergone independent external medical board review.',
     editorial: {
       authorName: 'NASA Health Editorial Collective',
       authorRole: 'Medical Writing & Health Literacy',
       reviewStatus: 'Drafted from clinical guidelines & endocrine consensus (ACOG & Endocrine Society). Has not undergone independent external medical board review.',
     },
     evidenceTier: 'established',
-    evidenceExplanation: 'Established endocrine and anatomical consensus supported by ACOG clinical guidelines, Endotext reproductive endocrinology, and large-scale cycle tracking cohorts.',
-    disclaimer: 'This article provides general physiological education. It does not replace clinical consultation, diagnosis, or personalized medical care.',
+    evidenceExplanation: 'Established endocrine and anatomical consensus supported by ACOG clinical guidelines, Endotext reproductive endocrinology, and large-scale cycle tracking cohorts. While physiological mechanisms are established, individual symptom expression and cycle lengths vary naturally.',
+    disclaimer: 'This article provides general physiological education. It does not replace clinical consultation, diagnosis, or personalized medical care from a licensed healthcare provider.',
     summary:
       'The menstrual cycle is an intricate, continuous dialogue between the brain and ovaries. Rather than a simple monthly event, it comprises four distinct hormonal seasons: Menstruation, Follicular, Ovulation, and Luteal.',
     keyTakeaways: [
@@ -150,10 +150,10 @@ export const ARTICLES: Article[] = [
         id: 'ref-acog-2022',
         title: 'Menstruation in Girls and Adolescents: Using the Menstrual Cycle as a Vital Sign',
         authors: 'American College of Obstetricians and Gynecologists (ACOG)',
-        source: 'Obstetrics & Gynecology Clinical Committee Opinion No. 651',
-        year: 2022,
+        source: 'Obstetrics & Gynecology Committee Opinion No. 651 (Reaffirmed 2022)',
+        year: 2015,
         doiOrUrl: 'https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2015/12/menstruation-in-girls-and-adolescents-using-the-menstrual-cycle-as-a-vital-sign',
-        note: 'Establishes the clinical standard for normal cycle variability and monitoring menstrual health as a core vital sign.',
+        note: 'Establishes the clinical standard for monitoring menstrual health as a core vital sign and normal pubertal-to-adult cycle ranges.',
       },
       {
         id: 'ref-reed-carr-2018',
@@ -193,18 +193,17 @@ export const ARTICLES: Article[] = [
     category: 'hormones-and-physiology',
     categoryLabel: 'Hormones & Biology',
     tags: ['estrogen', 'progesterone', 'hormones', 'ovulation', 'endocrinology'],
-    readingTimeMinutes: 5,
     publishedDate: '2026-09-20',
     lastReviewed: 'October 2026',
-    reviewStatus: 'Drafted from endocrine physiology references. Has not undergone independent medical board review.',
+    reviewStatus: 'Drafted from endocrine physiology references. Has not undergone independent external medical board review.',
     editorial: {
       authorName: 'NASA Health Editorial Collective',
       authorRole: 'Medical Writing & Health Literacy',
       reviewStatus: 'Drafted from endocrine physiology references. Has not undergone independent external medical board review.',
     },
     evidenceTier: 'established',
-    evidenceExplanation: 'Core ovarian steroidogenesis and hypothalamic-pituitary-ovarian (HPO) receptor dynamics represent peer-reviewed endocrine consensus.',
-    disclaimer: 'Educational information only. Laboratory hormone values should always be interpreted by a licensed physician.',
+    evidenceExplanation: 'Core ovarian steroidogenesis and hypothalamic-pituitary-ovarian (HPO) receptor dynamics represent peer-reviewed endocrine consensus. Laboratory hormone values and individual symptomatic sensitivities require personalized clinical interpretation.',
+    disclaimer: 'Educational information only. Laboratory hormone values and endocrine questions should always be interpreted by a licensed healthcare provider.',
     summary:
       'Estrogen builds, sharpens, and energizes; progesterone calms, stabilizes, and sustains. Explore how these two master messengers work in continuous, harmonious counterpoint throughout your cycle.',
     keyTakeaways: [
@@ -230,12 +229,22 @@ export const ARTICLES: Article[] = [
     ],
     references: [
       {
-        id: 'ref-prior-2020',
-        title: 'Progesterone for Symptomatic Perimenopause Treatment — Progesterone as a Brain Hormone',
+        id: 'ref-reed-carr-2018',
+        title: 'The Normal Menstrual Cycle and the Control of Ovulation',
+        authors: 'Reed BG, Carr BR.',
+        source: 'Endotext [Internet]. South Dartmouth (MA): MDText.com',
+        year: 2018,
+        doiOrUrl: 'https://www.ncbi.nlm.nih.gov/books/NBK279054/',
+        note: 'Clinical reference documenting estradiol rise in the proliferative phase and progesterone synthesis by the corpus luteum.',
+      },
+      {
+        id: 'ref-prior-2011',
+        title: 'Progesterone for Symptomatic Perimenopause Treatment – Progesterone politics, physiology and potential for perimenopause',
         authors: 'Prior JC.',
-        source: 'The Journal of Clinical Endocrinology & Metabolism',
-        year: 2020,
-        doiOrUrl: 'https://academic.oup.com/jcem',
+        source: 'Facts, Views & Vision in ObGyn, 3(2), 109–120',
+        year: 2011,
+        doiOrUrl: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3987372/',
+        note: 'Reviews the multi-system physiological actions of progesterone, its balance with estradiol, and its role as a neuroactive steroid.',
       },
     ],
     relatedArticleSlugs: [
@@ -257,24 +266,23 @@ export const ARTICLES: Article[] = [
     category: 'wellness-and-care',
     categoryLabel: 'Daily Wellness & Nutrition',
     tags: ['luteal phase', 'metabolism', 'nutrition', 'pms', 'progesterone', 'self-care'],
-    readingTimeMinutes: 6,
     publishedDate: '2026-09-25',
     lastReviewed: 'October 2026',
-    reviewStatus: 'Drafted from nutritional biochemistry and reproductive physiology sources.',
+    reviewStatus: 'Drafted from nutritional biochemistry and reproductive physiology sources. Has not undergone independent external medical board review.',
     editorial: {
       authorName: 'NASA Health Editorial Collective',
       authorRole: 'Medical Writing & Health Literacy',
-      reviewStatus: 'Drafted from nutritional biochemistry and reproductive physiology sources.',
+      reviewStatus: 'Drafted from nutritional biochemistry and reproductive physiology sources. Has not undergone independent external medical board review.',
     },
     evidenceTier: 'emerging',
-    evidenceExplanation: 'Metabolic rate increases post-ovulation are established, while specific nutritional interventions and individual premenstrual symptom variations represent active, evolving areas of clinical research.',
-    disclaimer: 'General educational guidance. Consult a healthcare professional for clinical premenstrual symptoms or nutrition plans.',
+    evidenceExplanation: 'Post-ovulatory metabolic rate increases are established by systematic reviews, whereas specific nutritional interventions and individual premenstrual symptom responses represent active, emerging areas of clinical research.',
+    disclaimer: 'General educational guidance. Consult a healthcare professional for clinical premenstrual symptoms or individualized nutrition plans.',
     summary:
       'The luteal phase represents the 10 to 16 days following ovulation. Learn why metabolic expenditure naturally increases, how blood sugar sensitivity shifts, and how to nurture yourself with grace.',
     keyTakeaways: [
       'Your resting metabolism burns an additional 100 to 300 kcal/day during the luteal phase due to progesterone.',
       'Insulin sensitivity naturally decreases slightly, making stable complex carbohydrates and proteins essential.',
-      'Prioritizing magnesium, vitamin B6, and consistent sleep can significantly smooth the premenstrual transition.',
+      'Preliminary clinical studies suggest that adequate micronutrients (such as magnesium and vitamin B6) alongside consistent sleep may support premenstrual comfort for some individuals, though individual responses vary.',
     ],
     sections: [
       {
@@ -288,10 +296,21 @@ export const ARTICLES: Article[] = [
     references: [
       {
         id: 'ref-benton-2020',
-        title: 'Metabolic Rate and Energy Balance Across the Menstrual Cycle',
-        authors: 'Benton MJ, et al.',
-        source: 'International Journal of Sports Nutrition and Exercise Metabolism',
+        title: 'Effect of menstrual cycle on resting metabolism: A systematic review and meta-analysis',
+        authors: 'Benton MJ, Hutchins AM, Dawes JJ.',
+        source: 'PLoS ONE, 15(7), e0236025',
         year: 2020,
+        doiOrUrl: 'https://doi.org/10.1371/journal.pone.0236025',
+        note: 'Systematic review confirming small but statistically significant elevation in resting metabolic rate during the post-ovulatory luteal phase compared to the follicular phase.',
+      },
+      {
+        id: 'ref-desouza-2000',
+        title: 'A synergistic effect of a daily supplement for 1 month of 200 mg magnesium plus 50 mg vitamin B6 for the relief of anxiety-related pre-menstrual symptoms: a randomized, double-blind, crossover study',
+        authors: 'De Souza MC, Walker AF, Robinson PA, Bolland K.',
+        source: "Journal of Women's Health & Gender-Based Medicine, 9(2), 131–139",
+        year: 2000,
+        doiOrUrl: 'https://doi.org/10.1089/152460900318623',
+        note: 'Randomized double-blind crossover trial evaluating combination magnesium and B6 for premenstrual nervous tension and somatic symptoms.',
       },
     ],
     relatedArticleSlugs: [
@@ -312,14 +331,13 @@ export const ARTICLES: Article[] = [
     category: 'menstrual-phases',
     categoryLabel: 'Cycle Phases',
     tags: ['cycle length', 'variability', 'irregularity', 'stress', 'acog', 'follicular phase'],
-    readingTimeMinutes: 5,
     publishedDate: '2026-10-01',
     lastReviewed: 'October 2026',
-    reviewStatus: 'Drafted using ACOG definitions of menstrual regularity and reproductive endocrinology guidelines.',
+    reviewStatus: 'Drafted using FIGO and ACOG definitions of menstrual regularity. Has not undergone independent external medical board review.',
     editorial: {
       authorName: 'NASA Health Editorial Collective',
       authorRole: 'Medical Writing & Health Literacy',
-      reviewStatus: 'Drafted using ACOG definitions of menstrual regularity and reproductive endocrinology guidelines.',
+      reviewStatus: 'Drafted using FIGO and ACOG definitions of menstrual regularity. Has not undergone independent external medical board review.',
     },
     evidenceTier: 'established',
     evidenceExplanation: 'Diagnostic boundaries for cycle length (24–38 days) and normal cycle-to-cycle variability (up to 7–9 days) are formal clinical standards defined by FIGO and ACOG.',
@@ -338,15 +356,23 @@ export const ARTICLES: Article[] = [
           'We often expect our bodies to operate like clockwork machinery. But the human reproductive axis is not an engine; it is an intelligent ecological sensor. If you experience illness, intensive physical exertion, travel across time zones, or emotional stress, the brain may prudently postpone follicular development.',
           'According to clinical criteria established by the International Federation of Gynecology and Obstetrics (FIGO) and ACOG, cycle length between 24 and 38 days is considered normal for adult women. Furthermore, cycle-to-cycle variability of up to 7 to 9 days is considered typical.',
         ],
+        subsections: [
+          {
+            title: 'When Variation Merits Clinical Assessment',
+            body: 'While cycles naturally adapt to stress, patterns such as cycles consistently under 24 days, longer than 38 days, missing for over 90 days, or accompanied by severe pain or unusually heavy bleeding warrant clinical evaluation to check for thyroid imbalances, PCOS, or other endocrine factors.',
+          },
+        ],
       },
     ],
     references: [
       {
         id: 'ref-figo-2018',
-        title: 'The two FIGO systems for normal and abnormal uterine bleeding symptoms and classification of causes of AUB in the reproductive years',
-        authors: 'Munro MG, et al.',
-        source: 'International Journal of Gynecology & Obstetrics, 143(3), 393-408',
+        title: 'The two FIGO systems for normal and abnormal uterine bleeding symptoms and classification of causes of abnormal uterine bleeding in the reproductive years: 2018 revisions',
+        authors: 'Munro MG, Critchley HOD, Fraser IS; FIGO Menstrual Disorders Committee.',
+        source: 'International Journal of Gynecology & Obstetrics, 143(3), 393–408',
         year: 2018,
+        doiOrUrl: 'https://doi.org/10.1002/ijgo.12666',
+        note: 'Defines international clinical diagnostic criteria for normal cycle duration (24–38 days) and normal cycle regularity (variation <= 7–9 days).',
       },
     ],
     relatedArticleSlugs: [
@@ -367,17 +393,16 @@ export const ARTICLES: Article[] = [
     category: 'body-signals',
     categoryLabel: 'Body Signals & Biomarkers',
     tags: ['cervical fluid', 'biomarkers', 'fertility awareness', 'estrogen', 'ovulation cues'],
-    readingTimeMinutes: 6,
     publishedDate: '2026-10-05',
     lastReviewed: 'October 2026',
-    reviewStatus: 'Drafted from fertility awareness and reproductive biology textbooks (Weschler, ACOG).',
+    reviewStatus: 'Drafted from fertility awareness literature and reproductive physiology sources. Has not undergone independent external medical board review.',
     editorial: {
       authorName: 'NASA Health Editorial Collective',
       authorRole: 'Medical Writing & Health Literacy',
-      reviewStatus: 'Drafted from fertility awareness and reproductive biology textbooks (Weschler, ACOG).',
+      reviewStatus: 'Drafted from fertility awareness literature and reproductive physiology sources. Has not undergone independent external medical board review.',
     },
     evidenceTier: 'established',
-    evidenceExplanation: 'Cervical crypt anatomy, estrogen-stimulated mucin synthesis, and progesterone-mediated drying are textbook anatomical and physiological phenomena.',
+    evidenceExplanation: 'Cervical crypt anatomy, estrogen-stimulated mucin synthesis, and progesterone-mediated drying are textbook anatomical and physiological phenomena. Observational biomarker tracking requires consistent technique and is not an automatic substitute for certified contraceptive instruction.',
     disclaimer: 'Educational guide. Not a substitute for accredited fertility awareness method (FAM) instruction if used for natural contraception.',
     summary:
       'Your cervix produces distinct biological secretions under the influence of changing estrogen and progesterone. Learn how to observe these clues without clinical anxiety.',
@@ -398,10 +423,21 @@ export const ARTICLES: Article[] = [
     references: [
       {
         id: 'ref-weschler-2015',
-        title: 'Taking Charge of Your Fertility: The Definitive Guide',
+        title: 'Taking Charge of Your Fertility: The Definitive Guide to Natural Birth Control, Pregnancy Achievement, and Reproductive Health',
         authors: 'Weschler T.',
-        source: 'William Morrow Paperbacks (20th Anniversary Edition)',
+        source: 'William Morrow (HarperCollins), 20th Anniversary Edition',
         year: 2015,
+        doiOrUrl: 'https://www.harpercollins.com/products/taking-charge-of-your-fertility-toni-weschler',
+        note: 'Comprehensive educational guide detailing the physiology of cervical secretions and symptothermal observation.',
+      },
+      {
+        id: 'ref-bigelow-2004',
+        title: 'Mucus observations in the fertile window: a better predictor of conception than timing of intercourse',
+        authors: 'Bigelow JL, Dunson DB, Stanford JB, et al.',
+        source: 'Human Reproduction, 19(4), 889–892',
+        year: 2004,
+        doiOrUrl: 'https://doi.org/10.1093/humrep/deh173',
+        note: 'Prospective clinical study establishing the biological validity and predictive accuracy of observable cervical mucus characteristics.',
       },
     ],
     relatedArticleSlugs: [
@@ -415,5 +451,11 @@ export const ARTICLES: Article[] = [
     },
   },
 ];
+
+// Dynamically compute readingTimeMinutes from content word count for all articles
+export const ARTICLES: Article[] = RAW_ARTICLES.map((article) => ({
+  ...article,
+  readingTimeMinutes: calculateReadingTime(article.sections, article.summary),
+}));
 
 export const ALL_TAGS = Array.from(new Set(ARTICLES.flatMap((a) => a.tags))).sort();
